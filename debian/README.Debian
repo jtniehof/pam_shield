@@ -1,0 +1,27 @@
+pam-shield for Debian
+---------------------
+
+This package contains automake converting patch 
+by Jan Engelhardt <jengelh@computergmbh.de>
+
+Configuring pam_shield
+----------------------
+
+1) Edit the config file /etc/security/shield.conf 
+and create an 'allow' line for trusted hosts.
+
+2) Edit /etc/pam.d/common-auth file and add
+
+	@include libpam-shield
+
+Do not leave it alone as it does not do any authentication itself.
+
+3) Simulate attack on Your host and check out
+
+	ip route show
+or
+	iptables -L
+
+depending on Your trigger script defined in shield.conf
+
+ -- Mateusz Kaduk <mateusz@kaduk.net>  Mon, 03 Dec 2007 21:31:45 +0100
