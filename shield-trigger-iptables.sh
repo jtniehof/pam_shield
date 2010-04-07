@@ -43,7 +43,7 @@ run_iptables() {
 #	* put in the correct port number (22 is ssh)
 #	* add additional rules for additional services as needed
 #
-	"$IPT" "$1" INPUT -i eth0 -p tcp -s "$2" --destination-port 22 -j pam_shield
+	"$IPT" "$1" INPUT -p tcp -s "$2" --destination-port 22 -j pam_shield
 
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...

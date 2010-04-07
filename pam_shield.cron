@@ -1,4 +1,4 @@
 #! /bin/sh
 
-/usr/sbin/shield-purge -c /etc/security/shield.conf
+[ -x /usr/sbin/shield-purge ] && /usr/sbin/shield-purge -c /etc/security/shield.conf
 

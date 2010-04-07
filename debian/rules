@@ -22,9 +22,7 @@ major=0
 #major=`ls src/.libs/lib*.so.* | \
 # awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
 
-include /usr/share/quilt/quilt.make
- 
-config.status: $(QUILT_STAMPFN)
+config.status:
 	dh_clean Makefile
 	sh ./autogen.sh
 	dh_testdir
@@ -51,9 +49,10 @@ _clean:
 	- $(MAKE) distclean
 	dh_clean build-stamp
 
-clean: _clean unpatch
-	rm -fr aclocal.m4 build-stamp config* missing \
-	Makefile* stamp* .depend .deps/ .pc/ ltmain.sh libtool depcomp install-sh
+clean: _clean
+	rm -fr aclocal.m4 build-stamp config.* configure missing \
+	Makefile Makefile.in stamp* .depend .deps/ .pc/ ltmain.sh libtool \
+	depcomp install-sh
 	- rm -fr $(CURDIR)/debian/libpam-shield
 
 install: build

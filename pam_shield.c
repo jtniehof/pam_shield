@@ -164,6 +164,7 @@ struct passwd *pwd;
 /*
 	if rhost is completely numeric, then it has no DNS entry
 */
+	if(rhost != NULL) {
 	if (strspn(rhost, "0123456789.") == strlen(rhost)
 		|| strspn(rhost, "0123456789:abcdefABCDEF") == strlen(rhost)) {
 		if (options & OPT_MISSING_DNS)
@@ -182,7 +183,7 @@ struct passwd *pwd;
 			return PAM_IGNORE;
 		}
 	}
-
+	}
 /* if not blocking all and the user is known, let go */
 	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
 		logmsg(LOG_DEBUG, "ignoring known user %s", user);
