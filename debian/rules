@@ -47,7 +47,7 @@ _clean:
 	dh_testroot
 	# Add here commands to clean up after the build process.
 	- $(MAKE) distclean
-	dh_clean build-stamp
+	dh_clean
 
 clean: _clean
 	rm -fr aclocal.m4 build-stamp config.* configure missing \
@@ -58,7 +58,7 @@ clean: _clean
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_prep 
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tmp
