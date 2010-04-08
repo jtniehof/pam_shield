@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Jonathan Niehof <jtniehof@gmail.com>
 Build-Depends: debhelper (>= 5), libgdbm-dev, libpam0g-dev, autoconf, automake (>= 1.11), libtool
-Standards-Version: 3.8.3
+Standards-Version: 3.8.4.0
 Homepage: http://www.ka.sara.nl/home/walter/pam_shield/
 
 Package: libpam-shield
