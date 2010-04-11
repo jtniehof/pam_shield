@@ -66,7 +66,7 @@ install: build
 	rm -f $(CURDIR)/debian/libpam-shield/lib/security/pam_shield.la
 	cp -f $(CURDIR)/shield-trigger.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger
 	cp -f $(CURDIR)/shield-trigger-iptables.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger-iptables
-	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily
+	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -86,6 +86,9 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 	dh_installdeb
+	cat $(CURDIR)/debian/libpam-shield/DEBIAN/preinst | sed -n -e "s/#NEWMD5#/$(shell md5sum $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield | sed -n -e "s/ .*//; p")/; p" > $(CURDIR)/debian/preinst.tmp
+	chmod --reference=$(CURDIR)/debian/libpam-shield/DEBIAN/preinst $(CURDIR)/debian/preinst.tmp
+	mv -f $(CURDIR)/debian/preinst.tmp $(CURDIR)/debian/libpam-shield/DEBIAN/preinst
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
