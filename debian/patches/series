@@ -2,3 +2,4 @@ automake.patch
 pam_shield.patch
 shield-trigger-iptables.patch
 cron_fix.patch
+shield-purge-force.patch
