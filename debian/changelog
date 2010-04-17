@@ -11,8 +11,9 @@ pam-shield (0.9.2-4) unstable; urgency=low
     -Add override for INSTALL (package-contains-upstream-install-documentation)
     -Add DEP-3 headers to patches (quilt-patch-missing-description)
   * Rename cron job so run-parts will actually run it.
+  * Add manpage for shield.conf (Closes: #488847).
 
- -- Jonathan Niehof <jtniehof@gmail.com>  Sun, 11 Apr 2010 19:37:41 -0400
+ -- Jonathan Niehof <jtniehof@gmail.com>  Fri, 16 Apr 2010 22:18:52 -0400
 
 pam-shield (0.9.2-3.2) unstable; urgency=low
 
