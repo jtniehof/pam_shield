@@ -1,0 +1,48 @@
+Subject: Wait for database instead of failing if busy
+Bug-Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=488841
+Forwarded: no
+Author: Jonathan Niehof <jtniehof@gmail.com>
+Last-Update: 2010-04-17
+
+--- a/pam_shield.c
++++ b/pam_shield.c
+@@ -3,6 +3,7 @@
+ 
+     pam_shield 0.9.2 WJ107
+     Copyright (C) 2007  Walter de Jong <walter@heiho.net>
++    Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
+ 
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -131,6 +132,7 @@
+ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+ char *user, *rhost;
+ struct passwd *pwd;
++ unsigned int retry_count;
+ 
+ 	if (init_module())
+ 		return PAM_IGNORE;
+@@ -248,11 +250,18 @@
+ 			}
+ 		}
+ /* open the database */
+-		if ((dbf = gdbm_open(dbfile, 512, GDBM_WRCREAT, (mode_t)0600, fatal_func)) == NULL) {
+-			logmsg(LOG_ERR, "failed to open gdbm file '%s' : %s", dbfile, gdbm_strerror(gdbm_errno));
+-			freeaddrinfo(addr_info);
+-			deinit_module();
+-			return PAM_IGNORE;
++		retry_count=0;
++		while ((dbf = gdbm_open(dbfile, 512, GDBM_WRCREAT, (mode_t)0600, fatal_func)) == NULL) {
++			if (gdbm_errno != GDBM_CANT_BE_WRITER || retry_count>500) {
++				logmsg(LOG_ERR, "failed to open gdbm file '%s' : %s", dbfile,
++				       gdbm_strerror(gdbm_errno));
++				freeaddrinfo(addr_info);
++				deinit_module();
++				return PAM_IGNORE;
++			}
++			logmsg(LOG_DEBUG,"waiting to open db, try %d",retry_count);
++			usleep(1000);
++			retry_count++;
+ 		}
+ /* for every address that this host is known for, check the database */
+ 		for(addr_p = addr_info; addr_p != NULL; addr_p = addr_p->ai_next) {
