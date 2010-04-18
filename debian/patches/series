@@ -4,3 +4,4 @@ shield-trigger-iptables.patch
 cron_fix.patch
 shield-purge-force.patch
 wait-for-db.patch
+shield-purge-arguments.patch

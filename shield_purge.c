@@ -76,9 +76,6 @@ struct option long_options[] = {
 	{ "force",		0, NULL, 'f' },
 };
 
-	if (argc <= 1)
-		usage(argv[0]);
-
 	while((opt = getopt_long(argc, argv, "hdc:nlf", long_options, NULL)) != -1) {
 		switch(opt) {
 			case 'h':
