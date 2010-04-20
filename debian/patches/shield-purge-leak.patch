@@ -1,5 +1,5 @@
 Subject: Fix a memory leak in shield-purge
-Forwarded: no
+Forwarded: yes
 Author: Jonathan Niehof <jtniehof@gmail.com>
 Last-Update: 2010-04-19
 --- a/shield_purge.c

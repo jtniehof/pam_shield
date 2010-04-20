@@ -1,8 +1,8 @@
 Subject: Add a force option to shield-purge to remove unexpired records
 Bug-Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=457642
-Forwarded: no
+Forwarded: yes
 Author: Jonathan Niehof <jtniehof@gmail.com>
-Last-Update: 2010-04-17
+Last-Update: 2010-04-19
 --- a/pam_shield_lib.c
 +++ b/pam_shield_lib.c
 @@ -3,6 +3,7 @@

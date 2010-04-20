@@ -1,8 +1,8 @@
 Subject: Wait for database instead of failing if busy
 Bug-Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=488841
-Forwarded: no
+Forwarded: yes
 Author: Jonathan Niehof <jtniehof@gmail.com>
-Last-Update: 2010-04-17
+Last-Update: 2010-04-19
 
 --- a/pam_shield.c
 +++ b/pam_shield.c

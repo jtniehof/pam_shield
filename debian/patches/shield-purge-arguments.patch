@@ -1,7 +1,7 @@
 Subject: Allow shield-purge to work without arguments
-Forwarded: no
+Forwarded: yes
 Author: Jonathan Niehof <jtniehof@gmail.com>
-Last-Update: 2010-04-18
+Last-Update: 2010-04-19
 --- a/shield_purge.c
 +++ b/shield_purge.c
 @@ -76,9 +76,6 @@

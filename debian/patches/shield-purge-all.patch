@@ -1,5 +1,5 @@
 Subject: Ensure shield-purge visits all records in the database
-Forwarded: no
+Forwarded: yes
 Author: Jonathan Niehof <jtniehof@gmail.com>
 Last-Update: 2010-04-19
 --- a/shield_purge.c
