@@ -76,17 +76,19 @@ Last-Update: 2010-04-17
  			default:
  				logmsg(LOG_ERR, "bad command line option");
  				exit(1);
-@@ -176,7 +185,12 @@
- 	while(key.dptr != NULL) {
+@@ -178,7 +187,14 @@
  		data = gdbm_fetch(dbf, key);
+ 		next_key = gdbm_nextkey(dbf, key);
  
 -		if (data.dptr == NULL) {
 +		if (options & OPT_FORCE) {
 +			logmsg(LOG_DEBUG, "force-expiring entry");
-+			if (!(options & OPT_DRYRUN))
++			if (!(options & OPT_DRYRUN)) {
 +				gdbm_delete(dbf, key);
++				deleted=1;
++			}
 +		}
 +		else if (data.dptr == NULL) {
  			logmsg(LOG_DEBUG, "cleaning up empty key");
- 			if (!(options & OPT_DRYRUN))
+ 			if (!(options & OPT_DRYRUN)) {
  				gdbm_delete(dbf, key);

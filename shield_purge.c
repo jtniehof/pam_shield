@@ -176,21 +176,27 @@ datum key, next_key, data;
 static void purge_db(void) {
 _pam_shield_db_rec_t *record;
 datum key, next_key, data;
+int deleted=0; /*If any key deleted, order changes; must revisit all keys*/
 
 	key = gdbm_firstkey(dbf);
 
 	while(key.dptr != NULL) {
 		data = gdbm_fetch(dbf, key);
+		next_key = gdbm_nextkey(dbf, key);
 
 		if (options & OPT_FORCE) {
 			logmsg(LOG_DEBUG, "force-expiring entry");
-			if (!(options & OPT_DRYRUN))
+			if (!(options & OPT_DRYRUN)) {
 				gdbm_delete(dbf, key);
+				deleted=1;
+			}
 		}
 		else if (data.dptr == NULL) {
 			logmsg(LOG_DEBUG, "cleaning up empty key");
-			if (!(options & OPT_DRYRUN))
+			if (!(options & OPT_DRYRUN)) {
 				gdbm_delete(dbf, key);
+				deleted=1;
+			}
 		} else {
 			record = (_pam_shield_db_rec_t *)data.dptr;
 
@@ -198,18 +204,24 @@ datum key, next_key, data;
 			if (expire_record(record)) {
 				if (!record->count) {
 					logmsg(LOG_DEBUG, "expiring entry");
-					if (!(options & OPT_DRYRUN))
+					if (!(options & OPT_DRYRUN)) {
 						gdbm_delete(dbf, key);
+						deleted=1;
+					}
 				} else {
 					logmsg(LOG_DEBUG, "storing updated entry");
 					if (!(options & OPT_DRYRUN))
 						gdbm_store(dbf, key, data, GDBM_REPLACE);
 				}
 			}
+			free(data.dptr);
 		}
-		next_key = gdbm_nextkey(dbf, key);
 		free(key.dptr);
 		key = next_key;
+		if (deleted && !key.dptr) {
+			deleted=0;
+			key = gdbm_firstkey(dbf);
+		}
 	}
 }
 
