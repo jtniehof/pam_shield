@@ -1,0 +1,67 @@
+pam_shield by Walter de Jong <walter@heiho.net> (C) 2007
+
+pam_shield COMES WITH NO WARRANTY. pam_shield IS FREE SOFTWARE.
+pam_shield is distributed under terms described in the GNU General Public
+License.
+
+See the INSTALL file for information on how to install pam_shield.
+
+
+pam_shield is a PAM module that uses iptables or null-routing to lock out
+script kiddies that probe your computer for open logins and/or easy guessable
+passwords. pam_shield is meant as an aid to protect public computers on the
+open internet.
+
+Everybody knows it is unwise to leave computers largely unprotected
+connected to the internet. However, there are cases in which this is still
+common practice. For exampe, academic sites with hundreds of users often
+have a policy of allowing logins from over the world. They are under
+constant attack by "kiddies" trying to break in to the system by
+password guessing. pam_shield aims to detect and block these "kiddies".
+
+
+(Not So) Random Remarks
+-----------------------
+ * pam_shield is a PAM (Pluggable Authentication Module). When used
+   inappropriately, your system might be at risk. Use with care.
+
+ * pam_shield blocks IPs. This means that when it blocks a multi-user
+   system, it blocks all users from that system.
+   For example, it may happen that an attacker is performing his
+   attack from a university system, from which many students connect.
+   By blocking the attacker, all students get blocked as well. This should
+   be no problem, but you should be aware that this can happen.
+
+ * pam_shield works by counting login attempts coming from a remote host
+   during a period of time. If there are too many attempts, it triggers
+   and blocks the remote host.
+
+ * To block and unblock IPs, pam_shield runs the shield-trigger.sh script.
+   By default, it uses null-routing to block hosts.
+   A script for using iptables is also provided, but you should customize
+   this script to fit your situation if you decide to use it.
+
+ * similar tools are daemon_shield and BlockHosts, which work by scanning
+   system logs. pam_shield works with PAM and a gdbm database.
+
+ * pam_shield is by no means THE solution for all your security problems.
+   Always remain on guard.
+
+
+See Also
+--------
+ * iptables homepage: http://www.netfilter.org/
+
+ * Linux PAM documentation:
+   http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/Linux-PAM_SAG.html
+
+ * daemon_shield: https://sourceforge.net/projects/daemonshield/
+
+ * BlockHosts: http://www.aczoom.com/cms/blockhosts/
+
+
+Greets,
+
+     --Walter
+
+EOB

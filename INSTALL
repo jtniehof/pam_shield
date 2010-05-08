@@ -1,0 +1,91 @@
+pam_shield by Walter de Jong <walter@heiho.net> (C) 2007
+
+pam_shield COMES WITH NO WARRANTY. synctool IS FREE SOFTWARE.
+pam_shield is distributed under terms described in the GNU General Public
+License.
+
+See the README file for some information about pam_shield.
+
+
+Read the README and this file carefully. Failure to setup pam_shield
+correctly, will render it useless.
+
+
+Building pam_shield
+-------------------
+
+Pre-reqs:
+	libpam0g-dev
+	libgdbm-dev
+
+
+There is no 'configure' script.
+Edit the Makefile to customize the installation directories.
+(install-sh is provided just in case you have no 'install' command).
+
+pam_shield consists of:
+- one PAM module:   /lib/security/pam_shield.so
+- one binary:       /usr/sbin/shield-purge
+- one shell script: /usr/sbin/shield-trigger.sh
+- one cron script:  /etc/cron.daily/pam-shield
+- one config file:  /etc/security/shield.conf
+- a gdbm database:  /var/lib/pam_shield/db
+
+Type 'make' to build the software.
+Do a 'make install' as root to install the software.
+You may do 'make uninstall' to remove the software.
+
+
+Configuring pam_shield
+----------------------
+Edit the config file /etc/security/shield.conf and make sure all paths are
+correct. Also, create an 'allow' line for your local networks. (If you do not
+list your local networks, a local user may be able to lock you out (DoS
+attack)).
+
+pam_shield uses a shell script named shield-trigger.sh to block and unblock
+sites. It will use null-routing to do so.
+
+
+Configuring PAM
+---------------
+The PAM config files usually reside under /etc/pam.d/
+The exact content of the PAM config files tends to differ between
+distributions.
+If you want to use pam_shield for all services, edit /etc/pam.d/common-auth.
+Add the line
+
+	auth optional   pam_shield.so
+
+and that's that.
+Make sure it is not the only auth module that is listed for the service.
+pam_shield does not do any authentication by itself and trying to run it
+as standalone auth module will leave your system wide open.
+
+
+Testing pam_shield
+------------------
+Edit /etc/security/shield.conf and set max_conns to a small value
+like 3 or so. Set the interval and the retention period both to 60 seconds.
+Set debug on.
+Now simulate an attack on your system by doing 4 quick logins to a
+non-existing user from a remote host. If you check the syslog (often
+/var/log/secure or /var/log/auth.log) you will see that pam_shield
+is triggering and later, expiring. To see what hosts are blocked,
+use any of the following commands (whichever you prefer):
+
+	netstat -r
+	route
+	ip route show
+
+If you check the debug log (often /var/log/debug) you will see more
+debug info from pam_shield.
+
+pam_shield should now be completely installed and working.
+Edit /etc/security/shield.conf and enter sensible values for max_conns,
+interval and retention.
+It is wise to periodically check whether pam_shield is still operating
+correctly.
+
+
+EOB

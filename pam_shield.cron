@@ -1,0 +1,4 @@
+#! /bin/sh
+
+/usr/sbin/shield-purge -c /etc/security/shield.conf
+
