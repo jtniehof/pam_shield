@@ -3,6 +3,7 @@
 
     pam_shield 0.9.2 WJ107
     Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+    -f option Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ static void usage(char *progname) {
 "  -d, --debug       Verbose output for debugging purposes\n"
 "  -n, --dry-run     Do not perform any updates\n"
 "  -l, --list        List all database entries\n"
+"  -f, --force       Delete all entries, even if unexpired\n"
 , basename(progname));
 
 	printf("\n"
@@ -58,7 +60,8 @@ static void usage(char *progname) {
 "are welcome to redistribute it under certain conditions.  See the GNU\n"
 "General Public Licence for details.\n"
 "\n"
-"Copyright (C) 2007 by Walter de Jong <walter@heiho.net>\n");
+"Copyright (C) 2007 by Walter de Jong <walter@heiho.net>\n"
+"Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>\n");
 	exit(1);
 }
 
@@ -70,12 +73,10 @@ struct option long_options[] = {
 	{ "conf",		1, NULL, 'c' },
 	{ "dry-run",	0, NULL, 'n' },
 	{ "list",		0, NULL, 'l' },
+	{ "force",		0, NULL, 'f' },
 };
 
-	if (argc <= 1)
-		usage(argv[0]);
-
-	while((opt = getopt_long(argc, argv, "hdc:nl", long_options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, "hdc:nlf", long_options, NULL)) != -1) {
 		switch(opt) {
 			case 'h':
 			case '?':
@@ -105,6 +106,11 @@ struct option long_options[] = {
 			case 'l':
 				options |= OPT_LISTDB;
 				logmsg(LOG_DEBUG, "list database");
+				break;
+
+			case 'f':
+				options |= OPT_FORCE;
+				logmsg(LOG_DEBUG, "force purge");
 				break;
 
 			default:
@@ -170,16 +176,27 @@ datum key, next_key, data;
 static void purge_db(void) {
 _pam_shield_db_rec_t *record;
 datum key, next_key, data;
+int deleted=0; /*If any key deleted, order changes; must revisit all keys*/
 
 	key = gdbm_firstkey(dbf);
 
 	while(key.dptr != NULL) {
 		data = gdbm_fetch(dbf, key);
+		next_key = gdbm_nextkey(dbf, key);
 
-		if (data.dptr == NULL) {
-			logmsg(LOG_DEBUG, "cleaning up empty key");
-			if (!(options & OPT_DRYRUN))
+		if (options & OPT_FORCE) {
+			logmsg(LOG_DEBUG, "force-expiring entry");
+			if (!(options & OPT_DRYRUN)) {
 				gdbm_delete(dbf, key);
+				deleted=1;
+			}
+		}
+		else if (data.dptr == NULL) {
+			logmsg(LOG_DEBUG, "cleaning up empty key");
+			if (!(options & OPT_DRYRUN)) {
+				gdbm_delete(dbf, key);
+				deleted=1;
+			}
 		} else {
 			record = (_pam_shield_db_rec_t *)data.dptr;
 
@@ -187,18 +204,24 @@ datum key, next_key, data;
 			if (expire_record(record)) {
 				if (!record->count) {
 					logmsg(LOG_DEBUG, "expiring entry");
-					if (!(options & OPT_DRYRUN))
+					if (!(options & OPT_DRYRUN)) {
 						gdbm_delete(dbf, key);
+						deleted=1;
+					}
 				} else {
 					logmsg(LOG_DEBUG, "storing updated entry");
 					if (!(options & OPT_DRYRUN))
 						gdbm_store(dbf, key, data, GDBM_REPLACE);
 				}
 			}
+			free(data.dptr);
 		}
-		next_key = gdbm_nextkey(dbf, key);
 		free(key.dptr);
 		key = next_key;
+		if (deleted && !key.dptr) {
+			deleted=0;
+			key = gdbm_firstkey(dbf);
+		}
 	}
 }
 
