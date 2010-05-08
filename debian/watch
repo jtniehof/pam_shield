@@ -5,4 +5,4 @@ version=3
 
 # <Webpage URL> <string match>
 #http://www.example.com/downloads.php pam-shield-(.*)\.tar\.gz
-http://www.ka.sara.nl/home/walter/pam_shield/pam_shield-(.*)\.tar\.gz
+http://www.heiho.net/pam_shield/pam_shield-(.*)\.tar\.gz

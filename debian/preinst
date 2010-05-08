@@ -1,0 +1,45 @@
+#!/bin/sh
+# preinst script for shield-pam
+
+set -e
+
+#conffile move based on http://wiki.debian.org/DpkgConffileHandling
+# Prepare to move a conffile without triggering a dpkg question
+prep_mv_conffile() {
+    local PKGNAME="$1"
+    local OLDCONFFILE="$2"
+    local NEWCONFFILE="$3"
+
+    if [ -e "$NEWCONFFILE" ]; then 
+	if [ ! -e "$OLDCONFFILE" ]; then
+	    rm -f "$NEWCONFFILE" #Probably stale somehow
+	else
+	    mv -f "$NEWCONFFILE" "$OLDCONFFILE" #Only file to tell user's wants
+	fi
+    fi
+    [ -e "$OLDCONFFILE" ] || return 0
+
+    local md5sum="$(md5sum $OLDCONFFILE | sed -e 's/ .*//')"
+    local old_md5sum="$(dpkg-query -W -f='${Conffiles}' $PKGNAME | \
+            sed -n -e "\' $OLDCONFFILE ' { s/ obsolete$//; s/.* //; p }")"
+    local new_md5sum="#NEWMD5#"
+    if [ "$md5sum" = "$old_md5sum" ]; then
+        rm -f "$OLDCONFFILE" #User didn't change, install new silently
+    elif [ "$new_md5sum" != "$old_md5sum" ]; then
+	mv -f "$OLDCONFFILE" "$NEWCONFFILE" #Three different, force dpkg query
+    fi
+    #Third option: maintainer didn't change but user did,
+    #move it in silently in postinst
+}
+
+LASTVERSION="0.9.2-3.2"
+case "$1" in
+install|upgrade)
+    if dpkg --compare-versions "$2" le "$LASTVERSION"; then
+        prep_mv_conffile libpam-shield "/etc/cron.daily/pam_shield.cron" "/etc/cron.daily/pam_shield"
+    fi
+esac
+
+#DEBHELPER#
+
+exit 0

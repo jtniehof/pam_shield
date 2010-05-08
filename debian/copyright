@@ -1,15 +1,16 @@
 This package was debianized by Mateusz Kaduk <mateusz@kaduk.net> on
 Sun, 02 Dec 2007 16:42:55 +0100.
 
+The current Debian maintainer is Jonathan Niehof <jtniehof@gmail.com>
+
 It was downloaded from <http://www.ka.sara.nl/home/walter/pam_shield/>
+and is currently available from <http://www.heiho.net/pam_shield/>
 
 Upstream Author: 
 
     Walter de Jong <walter@heiho.net>
 
-Copyright: 
-
-    <Copyright (C) 2007 Walter de Jong>
+Copyright 2007 Walter de Jong
 
 License:
 
@@ -28,7 +29,8 @@ License:
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 On Debian systems, the complete text of the GNU General
-Public License can be found in `/usr/share/common-licenses/GPL'.
+Public License can be found in `/usr/share/common-licenses/GPL-2'.
 
-The Debian packaging is (C) 2007, Mateusz Kaduk <mateusz@kaduk.net> and
-is licensed under the GPL, see above.
+The Debian packaging is copyright 2007, Mateusz Kaduk <mateusz@kaduk.net> and
+copyright 2010, Jonathan Niehof <jtniehof@gmail.com>, and is licensed under
+the GPL, see above.

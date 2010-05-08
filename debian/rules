@@ -22,9 +22,7 @@ major=0
 #major=`ls src/.libs/lib*.so.* | \
 # awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
 
-include /usr/share/quilt/quilt.make
- 
-config.status: $(QUILT_STAMPFN)
+config.status:
 	dh_clean Makefile
 	sh ./autogen.sh
 	dh_testdir
@@ -49,17 +47,18 @@ _clean:
 	dh_testroot
 	# Add here commands to clean up after the build process.
 	- $(MAKE) distclean
-	dh_clean build-stamp
+	dh_clean
 
-clean: _clean unpatch
-	rm -fr aclocal.m4 build-stamp config* missing \
-	Makefile* stamp* .depend .deps/ .pc/ ltmain.sh libtool depcomp install-sh
+clean: _clean
+	rm -fr aclocal.m4 build-stamp config.* configure missing \
+	Makefile Makefile.in stamp* .depend .deps/ .pc/ ltmain.sh libtool \
+	depcomp install-sh
 	- rm -fr $(CURDIR)/debian/libpam-shield
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_prep 
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tmp
@@ -67,7 +66,7 @@ install: build
 	rm -f $(CURDIR)/debian/libpam-shield/lib/security/pam_shield.la
 	cp -f $(CURDIR)/shield-trigger.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger
 	cp -f $(CURDIR)/shield-trigger-iptables.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger-iptables
-	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily
+	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -81,11 +80,15 @@ binary-arch: build install
 	dh_installdocs
 	dh_installman
 	dh_installpam
+	dh_lintian
 	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
 	dh_installdeb
+	cat $(CURDIR)/debian/libpam-shield/DEBIAN/preinst | sed -n -e "s/#NEWMD5#/$(shell md5sum $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield | sed -n -e "s/ .*//; p")/; p" > $(CURDIR)/debian/preinst.tmp
+	chmod --reference=$(CURDIR)/debian/libpam-shield/DEBIAN/preinst $(CURDIR)/debian/preinst.tmp
+	mv -f $(CURDIR)/debian/preinst.tmp $(CURDIR)/debian/libpam-shield/DEBIAN/preinst
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums

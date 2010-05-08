@@ -1,0 +1,3 @@
+#Configuration documentation packaged by upstream in INSTALL, referred to
+#in other documentation (bug #517050), so should be included.
+libpam-shield binary: package-contains-upstream-install-documentation usr/share/doc/libpam-shield/INSTALL

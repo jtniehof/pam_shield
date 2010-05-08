@@ -1,0 +1,128 @@
+.\" shield.conf - pam-shield configuration file
+.\" Copyright 2010 Jonathan Niehof
+.\" 
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\" 
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
+.\"
+.TH SHIELD.CONF 5 "16 April 2010" "pam-shield 0.9.2" "Debian GNU/Linux manual"
+.SH NAME
+shield.conf \- pam-shield configuration file
+.SH DESCRIPTION
+.I /etc/security/shield.conf
+is the configuration file for PAM module pam-shield, which locks out
+remote attackers trying password guessing.
+
+
+.SH OPTIONS
+
+.HP
+.B debug
+[on|off]
+.br
+Log (or do not log) debugging information via
+.BR syslog (3).
+.HP
+.B block
+[all-users|unknown-users]
+.br
+Block all users, or only unknown users. Whether users are "known" is determined from
+.BR getpwnam (3)
+.HP
+.B allow_missing_dns
+[yes|no]
+.br
+If no, reject any connection that comes from a numerical IP address with no DNS
+name (as returned by
+.BR pam_get_item (3)
+with
+.I item_type
+set to PAM_RHOST).
+.HP
+.B allow_missing_reverse
+[yes|no]
+.br
+If no, reject any connection that comes from a host with no reverse DNS
+entry.
+.HP
+.B allow
+.I hostname
+.br
+Host or network to whitelist. These hosts are passed through with no checks or
+logging. Multiple
+.B allow
+lines are permitted.
+.I hostname
+may be IP address, hostname, network/netmask, or network in CIDR
+format.
+.HP
+.B db
+.I filename
+.br
+Database file where login attempts are stored.
+.HP
+.B trigger_cmd
+.I command
+.br
+Command to run to block/unblock a host. See
+.BR shield-trigger (8)
+and
+.BR shield-trigger-iptables (8)
+for two examples.
+.HP
+.B max_conns
+.I n
+.br
+Host will be blocked if more than
+.I n
+connection attempts from one host in
+.B interval
+time.
+.HP
+.B interval
+.I n
+.br
+Host blocked if more than
+.B max_conns
+attempts in
+.I n
+seconds. Instead of seconds, suffix may be used: s for seconds, m minutes,
+h hours, d days, w weeks, M months (30 days), y years.
+.HP
+.B retention
+.I n
+.br
+Record of connection attempts retained for
+.I n
+seconds. Suffixes may be used as in
+.B interval.
+Each host is checked for expiration when it attempts to connect, and the
+entire database is checked whenever 
+.BR shield-purge (8)
+is run (by default, once a day).
+
+.SH FILES
+.PD 0
+.HP
+.I /etc/security/shield.conf
+Configuration file for
+.B pam-shield
+
+.SH SEE ALSO
+.BR shield-purge (8),
+.BR shield-trigger (8),
+.BR shield-trigger-iptables (8)
+
+.SH AUTHORS
+pam-shield was written by and copyright 2007 Walter de Jong \%<walter@heiho.net>. This manpage was written for the Debian project and copyright 2010 Jonathan Niehof
+\%<jtniehof@gmail.com>.

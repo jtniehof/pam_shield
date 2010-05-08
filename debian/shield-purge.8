@@ -1,4 +1,4 @@
-.TH SHIELD-PURGE 8 " DEC 3 2007" "PAM-SHIELD 0.2.9" "pam-shield"
+.TH SHIELD-PURGE 8 " APR 17 2010" "PAM-SHIELD 0.9.2" "pam-shield"
 .SH NAME
 \fBshield-purge\fR \- manage hosts rules
 .SH SYNOPSIS
@@ -6,6 +6,13 @@ shield_purge <options>
 .SH DESCRIPTION
 A binary for the pam-shield module, shield_purge is not intended to be invoked manualy.
 It is a halper program for job in crontab.
+
+.B shield-purge
+clears records from the database that are older than the time specified by
+.B retention
+in
+.BR shield.conf (5).
+
 .SH OPTIONS
 .TP
 .B \-h, \-\-help
@@ -17,6 +24,9 @@ Specify config file (default: /etc/security/shield.conf)
 .B \-d, \-\-debug
 Verbose output for debugging purposes
 .TP
+.B \-f, \-\-force
+Remove all records from the database, not just expired ones.
+.TP
 .B \-n, \-\-dry\-run
 Do not perform any updates
 .TP
@@ -24,7 +34,7 @@ Do not perform any updates
 List all database entries
 .br	  
 .SH COPYRIGHT
-Copyright \(co 2007 by Walter de Jong <walter@heiho.net>
+Copyright \(co 2007 by Walter de Jong <walter@heiho.net>. \-f option copyright 2010 by Jonathan Niehof <jtniehof@gmail.com>.
 .br
 This program is part of the PAM-shield package.
 PAM-shield comes with ABSOLUTELY NO WARRANTY.  This is free software, and you

@@ -1,3 +1,4 @@
+debian/shield.conf.5
 debian/shield-purge.8
 debian/shield-trigger.8
 debian/shield-trigger-iptables.8

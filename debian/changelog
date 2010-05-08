@@ -1,3 +1,25 @@
+pam-shield (0.9.2-4) unstable; urgency=low
+
+  * New maintainer. (Closes: #572656).
+  * Switch to dpkg-source 3.0 (quilt) format.
+  * Bump Standards Version to 3.8.4.0. (No changes needed).
+  * Update to debhelper 7. (dh_clean now handles *-stamp, new dh_prep).
+  * New homepage; updated watchfile.
+  * Lintian fixups:
+    -Add misc:Depends to control (debhelper-but-no-misc-depends)
+    -Add override for INSTALL (package-contains-upstream-install-documentation)
+    -Add DEP-3 headers to patches (quilt-patch-missing-description)
+  * Rename cron job so run-parts will actually run it.
+  * Add manpage for shield.conf (Closes: #488847).
+  * Ensure cron job does not return 0 (Closes: #563065).
+  * Add --force option to shield-purge (Closes: #457642).
+  * Wait for database if it isn't writable (Closes: 488841).
+  * Modify shield-purge to work without arguments.
+  * Fix a memory leak in shield-purge.
+  * Fix shield-purge to traverse entire database.
+
+ -- Jonathan Niehof <jtniehof@gmail.com>  Mon, 19 Apr 2010 20:34:27 -0400
+
 pam-shield (0.9.2-3.2) unstable; urgency=low
 
   * Non-maintainer upload.
