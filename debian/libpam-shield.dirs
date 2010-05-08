@@ -1,0 +1,5 @@
+etc/cron.daily
+etc/security
+lib/security
+usr/sbin
+var/lib/pam_shield

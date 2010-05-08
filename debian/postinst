@@ -1,0 +1,28 @@
+#!/bin/sh
+# postinst script for shield-pam
+
+set -e
+case "$1" in
+    configure)
+    if [ ! -d /var/lib/pam_shield ]; then
+    mkdir /var/lib/pam_shield
+    fi
+    touch /var/lib/pam_shield/db
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    if [ -d /var/lib/pam_shield ]; then 
+    rm -fr /var/lib/pam_shield
+    fi
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+

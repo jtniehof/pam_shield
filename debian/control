@@ -1,0 +1,17 @@
+Source: pam-shield
+Section: admin
+Priority: optional
+Maintainer: Mateusz Kaduk <mateusz@kaduk.net>
+Build-Depends: debhelper (>= 5), libgdbm-dev, libpam0g-dev, quilt, autoconf, automake (>= 1.11), libtool
+Standards-Version: 3.8.3
+Homepage: http://www.ka.sara.nl/home/walter/pam_shield/
+
+Package: libpam-shield
+Architecture: any
+Depends: ${shlibs:Depends}
+Suggests: iproute, iptables
+Description: locks out remote attackers trying password guessing
+ In certain situations it is not possible to use host based 
+ authentication and here pam-shield comes in use.
+ .
+ It locks out brute-force password crackers using null-route or iptables rules.

@@ -1,0 +1,91 @@
+
+Convert pam_shield to automake.
+
+Signed-off-by: Jan Engelhardt <jengelh@computergmbh.de>
+
+---
+ Makefile.am  |   21 +++++++++++++++++++++
+ autogen.sh   |    3 +++
+ configure.ac |   38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 62 insertions(+)
+
+Index: pam-shield-0.9.2/Makefile.am
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ pam-shield-0.9.2/Makefile.am	2009-10-09 09:08:30.000000000 -0400
+@@ -0,0 +1,21 @@
++
++AUTOMAKE_OPTIONS   = foreign subdir-objects
++moduledir          = @PAM_MODDIR@
++module_LTLIBRARIES = pam_shield.la
++sbin_PROGRAMS      = shield-purge
++#sbin_SCRIPTS       = shield-trigger.sh shield-trigger-iptables.sh
++securitydir        = ${sysconfdir}/security
++security_DATA      = shield.conf
++
++pam_shield_la_LDFLAGS = -module -avoid-version
++pam_shield_la_LIBADD  = -lgdbm -lpam
++shield_purge_LDFLAGS  = -lgdbm
++
++AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
++            -D_REENTRANT -Wall -Wmissing-declarations -Wmissing-prototypes \
++            -Wredundant-decls -Wshadow -Wstrict-prototypes -Winline -pipe
++
++install-exec-hook:
++	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
++	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
++#	ln -s shield-trigger.sh "${DESTDIR}${sbindir}/pam_shield-trigger";
+Index: pam-shield-0.9.2/autogen.sh
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ pam-shield-0.9.2/autogen.sh	2009-10-09 09:09:16.000000000 -0400
+@@ -0,0 +1,6 @@
++#!/bin/sh
++
++export AUTOMAKE=/usr/bin/automake-1.11
++export ACLOCAL=/usr/bin/aclocal-1.11
++
++exec autoreconf -fi;
+Index: pam-shield-0.9.2/configure.ac
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ pam-shield-0.9.2/configure.ac	2009-10-09 09:08:30.000000000 -0400
+@@ -0,0 +1,38 @@
++
++AC_INIT(pam_shield, 0.9.2)
++AC_CONFIG_HEADERS(config.h)
++AM_INIT_AUTOMAKE
++
++AC_PROG_CC
++AC_PROG_INSTALL
++AC_DISABLE_STATIC
++AM_PROG_LIBTOOL
++AC_PROG_LN_S
++
++AC_ARG_WITH([slibdir], AS_HELP_STRING([--with-slibdir=PATH],
++	[Path to the super lib directory [[/lib]]]),
++	[slibdir="$withval"], [slibdir="/lib"])
++AC_SUBST(slibdir)
++
++AC_CHECK_HEADER(gdbm.h, [],
++	[AC_MSG_ERROR([You need to have gdbm-devel installed])])
++AC_CHECK_HEADER(security/pam_modules.h,[have_pamheader="yes"],)
++# Mac OS X 10.3 puts PAM headers in /usr/include/pam.
++AC_CHECK_HEADER(pam/pam_modules.h,[have_pamheader="yes"],)
++if test x"$have_pamheader" != x"yes"; then
++	AC_MSG_ERROR(You are missing PAM headers)
++fi
++
++case "$host" in
++(*-*-linux*)
++	PAM_MODDIR="\$(slibdir)/security";
++	;;
++(*-*-darwin*)
++	PAM_MODDIR="/usr/lib/pam";
++	;;
++(*)
++	PAM_MODDIR="/usr/lib";
++	;;
++esac;
++AC_SUBST(PAM_MODDIR)
++AC_OUTPUT(Makefile)

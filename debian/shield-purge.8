@@ -1,0 +1,32 @@
+.TH SHIELD-PURGE 8 " DEC 3 2007" "PAM-SHIELD 0.2.9" "pam-shield"
+.SH NAME
+\fBshield-purge\fR \- manage hosts rules
+.SH SYNOPSIS
+shield_purge <options>
+.SH DESCRIPTION
+A binary for the pam-shield module, shield_purge is not intended to be invoked manualy.
+It is a halper program for job in crontab.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Display this information
+.TP
+.B \-c, \-\-conf=file
+Specify config file (default: /etc/security/shield.conf)
+.TP
+.B \-d, \-\-debug
+Verbose output for debugging purposes
+.TP
+.B \-n, \-\-dry\-run
+Do not perform any updates
+.TP
+.B \-l, \-\-list
+List all database entries
+.br	  
+.SH COPYRIGHT
+Copyright \(co 2007 by Walter de Jong <walter@heiho.net>
+.br
+This program is part of the PAM-shield package.
+PAM-shield comes with ABSOLUTELY NO WARRANTY.  This is free software, and you
+are welcome to redistribute it under certain conditions.  See the GNU
+General Public Licence for details.
