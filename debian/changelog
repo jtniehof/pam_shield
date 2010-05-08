@@ -1,0 +1,43 @@
+pam-shield (0.9.2-3.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Update build-deps and patch to use automake-1.11. (Closes: #543024).
+  * Install INSTALL file. (Closes: #517050).
+  * Add install-sh to clean target in rules.
+  * Remove paths from commands in maintainer scripts.
+  * Add README.source for quilt patch system.
+  * Add Homepage field.
+  * Bump Standards Version to 3.8.3. (No changes needed).
+
+ -- Barry deFreese <bdefreese@debian.org>  Fri, 09 Oct 2009 09:04:02 -0400
+
+pam-shield (0.9.2-3.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Check for executable in cron file (Closes: #461574)
+
+ -- Filippo Giunchedi <filippo@debian.org>  Thu, 01 May 2008 17:53:43 +0200
+
+pam-shield (0.9.2-3) unstable; urgency=low
+
+  * Checked against new debian-policy and changed to 3.7.3
+  * Fixed differnce between documentation and installed files
+    (Closes: #456759)
+  * Fixed suboptimal description wording (Closes: #456814)
+  * Fixed typo in the short description (Closes: #457043)
+
+ -- Mateusz Kaduk <mateusz@kaduk.net>  Wed, 19 Dec 2007 16:28:24 +0100
+
+pam-shield (0.9.2-2) unstable; urgency=low
+
+  * Added checking rhost for null pointer, 
+    as it caused segmentation fault.
+
+ -- Mateusz Kaduk <mateusz@kaduk.net>  Wed, 05 Dec 2007 21:05:32 +0100
+
+pam-shield (0.9.2-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Mateusz Kaduk <mateusz@kaduk.net>  Sun, 02 Dec 2007 16:42:55 +0100
+
