@@ -9,6 +9,7 @@ Homepage: http://www.heiho.net/pam_shield/
 Package: libpam-shield
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: dpkg (>= 1.15.7.2)
 Suggests: iproute, iptables
 Description: locks out remote attackers trying password guessing
  In certain situations it is not possible to use host based 

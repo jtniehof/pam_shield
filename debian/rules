@@ -86,9 +86,6 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 	dh_installdeb
-	cat $(CURDIR)/debian/libpam-shield/DEBIAN/preinst | sed -n -e "s/#NEWMD5#/$(shell md5sum $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield | sed -n -e "s/ .*//; p")/; p" > $(CURDIR)/debian/preinst.tmp
-	chmod --reference=$(CURDIR)/debian/libpam-shield/DEBIAN/preinst $(CURDIR)/debian/preinst.tmp
-	mv -f $(CURDIR)/debian/preinst.tmp $(CURDIR)/debian/libpam-shield/DEBIAN/preinst
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums

@@ -3,6 +3,10 @@
 #
 
 set -e
+
+dpkg-maintscript-helper mv_conffile \
+/etc/cron.daily/pam_shield.cron /etc/cron.daily/pam_shield 0.9.2-3.2 -- "$@"
+
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     if [ -d /var/lib/pam_shield ];
