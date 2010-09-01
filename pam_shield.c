@@ -318,19 +318,15 @@ unsigned int retry_count;
 				record->timestamps[record->count++] = this_time;
 
 				logmsg(LOG_DEBUG, "%u times from %s", record->count, rhost);
-
-/* too many in the interval, so trigger */
 /*
-	FIXME
-	What if trigger_active is falsely set? (this happens all the time ... system reboots, admins that delete
-	blackholed routes, etc)
+	too many in the interval, so trigger
 
-	trigger "add" is also subject to a race, the same IP may be blocked multiple times
+	trigger "add" is subject to a race, so try to be smart about it
+	and do not add the same block within 20 seconds
 */
-				if (!record->trigger_active && record->count >= max_conns) {
-					if (!run_trigger("add", record))
-						record->trigger_active = this_time;
-				}
+				if (record->count >= max_conns && this_time - record->trigger_active > 20
+					&& !run_trigger("add", record))
+					record->trigger_active = this_time;
 			} else {
 				if ((record = new_db_record(max_conns)) != NULL) {
 					record->addr_family = addr_family;
