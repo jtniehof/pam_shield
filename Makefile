@@ -49,7 +49,7 @@ dep depend .depend:
 install: all
 	$(INSTALL) -s -o root -g root -m 644 pam_shield.so ${pamdir}
 	$(INSTALL) -o root -g root -m 755 -T pam_shield.cron ${crondir}/pam-shield
-	$(INSTALL) -o root -g root -m 755 shield-trigger.sh ${bindir}
+	$(INSTALL) -o root -g root -m 755 shield-trigger ${bindir}
 	$(INSTALL) -s -o root -g root -m 755 shield-purge ${bindir}
 	if ! test -e ${confdir}/shield.conf; then \
 	$(INSTALL) -o root -g root -m 644 shield.conf ${confdir} ; \
@@ -59,7 +59,7 @@ install: all
 uninstall:
 	$(RM) ${pamdir}/pam_shield.so
 	$(RM) ${crondir}/pam-shield
-	$(RM) ${bindir}/shield-trigger.sh
+	$(RM) ${bindir}/shield-trigger
 	$(RM) ${bindir}/shield-purge
 	$(RM) ${confdir}/shield.conf
 	$(RM) -r /var/lib/pam_shield

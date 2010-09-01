@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-#	shield-trigger.sh	WJ107
+#	shield-trigger-iptables	WJ107
 #
 #   pam_shield 0.9.4  WJ107
 #   Copyright (C) 2007,2010  Walter de Jong <walter@heiho.net>
@@ -55,10 +55,10 @@ run_iptables() {
 
 
 usage() {
-	echo "shield-trigger.sh WJ107"
+	echo "shield-trigger-iptables WJ107"
 	echo "usage: ${0##*/} [add|del] <IP number>"
 	echo
-	echo "shield-trigger.sh is normally called by the pam_shield PAM module"
+	echo "shield-trigger-iptables is normally called by the pam_shield PAM module"
 	exit 1
 }
 

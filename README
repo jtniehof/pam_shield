@@ -36,7 +36,7 @@ password guessing. pam_shield aims to detect and block these "kiddies".
    during a period of time. If there are too many attempts, it triggers
    and blocks the remote host.
 
- * To block and unblock IPs, pam_shield runs the shield-trigger.sh script.
+ * To block and unblock IPs, pam_shield runs the shield-trigger script.
    By default, it uses null-routing to block hosts.
    A script for using iptables is also provided, but you should customize
    this script to fit your situation if you decide to use it.

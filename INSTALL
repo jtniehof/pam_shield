@@ -31,7 +31,7 @@ pam_shield consists of:
 - one PAM module:   /lib/security/pam_shield.so
                  or /lib64/security/pam_shield.so on 64-bit systems
 - one binary:       /usr/sbin/shield-purge
-- one shell script: /usr/sbin/shield-trigger.sh
+- one shell script: /usr/sbin/shield-trigger
 - one cron script:  /etc/cron.daily/pam-shield
 - one config file:  /etc/security/shield.conf
 - a gdbm database:  /var/lib/pam_shield/db
@@ -48,8 +48,11 @@ correct. Also, create an 'allow' line for your local networks. (If you do not
 list your local networks, a local user may be able to lock you out (DoS
 attack)).
 
-pam_shield uses a shell script named shield-trigger.sh to block and unblock
+pam_shield uses a shell script named shield-trigger to block and unblock
 sites. It will use null-routing to do so.
+A script named shield-trigger-iptables is provided too, which uses iptables
+to block sites, but beware that it needs system-specific customization to
+work correctly.
 
 
 Configuring PAM

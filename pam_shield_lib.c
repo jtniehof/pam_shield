@@ -49,7 +49,7 @@
 
 #define DEFAULT_CONFFILE		"/etc/security/shield.conf"
 #define DEFAULT_DBFILE			"/var/lib/pam_shield/db"
-#define DEFAULT_TRIGGER_CMD		"/usr/sbin/pam_shield-trigger.sh"
+#define DEFAULT_TRIGGER_CMD		"/usr/sbin/pam_shield-trigger"
 #define DEFAULT_MAX_CONNS		10
 #define DEFAULT_INTERVAL		60L
 #define DEFAULT_RETENTION		(3600L * 24L)
