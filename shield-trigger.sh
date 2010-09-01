@@ -72,14 +72,14 @@ fi
 
 case "$1" in
 	add)
-		logger -i -t shield-trigger -p auth.info "blocking $2"
+		logger -i -t shield-trigger -p authpriv.info "blocking $2"
 
 		CMD="add"
 		IP=$2
 		;;
 
 	del)
-		logger -i -t shield-trigger -p auth.info "unblocking $2"
+		logger -i -t shield-trigger -p authpriv.info "unblocking $2"
 
 		CMD="del"
 		IP=$2
