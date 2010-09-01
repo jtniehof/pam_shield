@@ -3,7 +3,7 @@
 #	shield-trigger.sh	WJ107
 #
 #   pam_shield 0.9.4  WJ107
-#   Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+#   Copyright (C) 2007,2010  Walter de Jong <walter@heiho.net>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by

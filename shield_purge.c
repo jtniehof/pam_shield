@@ -2,7 +2,7 @@
 	shield_purge.c	WJ107
 
     pam_shield 0.9.4 WJ107
-    Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+    Copyright (C) 2007,2010  Walter de Jong <walter@heiho.net>
     -f option Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ static void usage(char *progname) {
 "are welcome to redistribute it under certain conditions.  See the GNU\n"
 "General Public Licence for details.\n"
 "\n"
-"Copyright (C) 2007 by Walter de Jong <walter@heiho.net>\n"
+"Copyright (C) 2007,2010 by Walter de Jong <walter@heiho.net>\n"
 "Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>\n");
 	exit(1);
 }
