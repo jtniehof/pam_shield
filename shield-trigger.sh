@@ -92,4 +92,6 @@ esac
 
 null_route "$CMD" "$IP"
 
+exit 0		# make pam_shield happy
+
 # EOB

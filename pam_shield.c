@@ -136,7 +136,7 @@ int err;
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
 char *user, *rhost;
 struct passwd *pwd;
- unsigned int retry_count;
+unsigned int retry_count;
 
 	if (init_module())
 		return PAM_IGNORE;
@@ -144,10 +144,11 @@ struct passwd *pwd;
 	get_options(argc, (char **)argv);
 	logmsg(LOG_DEBUG, "this is version " PAM_SHIELD_VERSION);
 
-	if (read_config()) {
-		deinit_module();
-		return PAM_IGNORE;
-	}
+/*
+	read_config() may fail (due to syntax errors, etc.), try to make the best of it
+	by continuing anyway
+*/
+	read_config();
 
 /* get the username */
 	if (pam_get_item(pamh, PAM_USER, (const void **)(void *)&user) != PAM_SUCCESS)
@@ -327,12 +328,8 @@ struct passwd *pwd;
 	trigger "add" is also subject to a race, the same IP may be blocked multiple times
 */
 				if (!record->trigger_active && record->count >= max_conns) {
-/*
-	FIXME
-	if run_trigger fails ("Command not found"), trigger_active must not be set
-*/
-					record->trigger_active = this_time;
-					run_trigger("add", record);
+					if (!run_trigger("add", record))
+						record->trigger_active = this_time;
 				}
 			} else {
 				if ((record = new_db_record(max_conns)) != NULL) {

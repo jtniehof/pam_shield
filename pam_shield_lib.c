@@ -506,6 +506,7 @@ int bits;
 */
 static int read_config(void) {
 FILE *f;
+struct stat statbuf;
 char buf[MAX_LINE], *p, *endp;
 int line_no, err;
 long multiplier;
@@ -626,6 +627,10 @@ long multiplier;
 				logmsg(LOG_CRIT, "out of memory");
 				err--;
 			}
+			if (stat(trigger_cmd, &statbuf) == -1) {
+				logmsg(LOG_ALERT, "%s:%d: command '%s' not found", conffile, line_no, trigger_cmd);
+				err--;
+			}
 			continue;
 		}
 		if (!strcmp(buf, "max_conns")) {
@@ -732,8 +737,12 @@ pid_t pid;
 		exit(-1);
 	} else {
 		pid_t err;
+		int status;
 
-		while((err = waitpid(pid, NULL, 0)) > 0);
+		while((err = waitpid(pid, &status, 0)) > 0);
+
+		if (WEXITSTATUS(status) != 0)
+			return -1;
 	}
 	return 0;
 }
