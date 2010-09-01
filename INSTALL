@@ -89,12 +89,14 @@ Explanation: Every login attempt will be screened by pam_shield. If all
 looks well, the system may continue to authenticate the user as usual.
 If all is not well, pam_shield will abort the login immediately.
 The shield.conf options 'allow_missing_dns' and 'allow_missing_reverse'
-play an important role here. If you enable 'block all-users', it is
-easy to lock yourself out from a machine that has no DNS entry.
-Note that if you 'block all-users' with this config, you will also block
-legitimate users that do too many logins in a short period of time.
-(This could be legitimate logins like when a user does:
- for file in *; do scp $file remotemachine: ; done)
+play an important role here. Missing DNS entries are suspicious because
+hackers use this to try stay hidden. However, pam_shield will still allow
+logins for _known_ users if you set 'block unknown-users'.
+If you enable 'block all-users', it is easy to lock yourself out from a
+machine that has no DNS entry. You will also block legitimate users that
+do too many logins in a short period of time. For example, when a user
+does this:
+ for file in *; do scp $file remotemachine: ; done
 
 NB. If there are other "required" modules in the stack that must run no
     matter what, you may change "requisite" to "required".

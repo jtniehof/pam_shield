@@ -137,6 +137,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
 char *user, *rhost;
 struct passwd *pwd;
 unsigned int retry_count;
+int suspicious_dns;
 
 	if (init_module())
 		return PAM_IGNORE;
@@ -159,6 +160,13 @@ unsigned int retry_count;
 
 	logmsg(LOG_DEBUG, "user %s", (user == NULL) ? "(unknown)" : user);
 
+/* if not blocking all and the user is known, let go */
+	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
+		logmsg(LOG_DEBUG, "ignoring known user %s", user);
+		deinit_module();
+		return PAM_IGNORE;
+	}
+
 /* get the remotehost address */
 	if (pam_get_item(pamh, PAM_RHOST, (const void **)(void *)&rhost) != PAM_SUCCESS)
 		rhost = NULL;
@@ -171,19 +179,14 @@ unsigned int retry_count;
 /*
 	if rhost is completely numeric, then it has no DNS entry
 */
+	suspicious_dns = 0;
 	if (strspn(rhost, "0123456789.") == strlen(rhost)
 		|| strspn(rhost, "0123456789:abcdefABCDEF") == strlen(rhost)) {
 		if (options & OPT_MISSING_DNS)
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (allowed)", rhost);
 		else {
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (denied)", rhost);
-/*
-	FIXME
-	The IPaddress of the attacker is not getting blocked ever (!) in this case
-	because we're returning right now
-*/
-			deinit_module();
-			return PAM_AUTH_ERR;
+			suspicious_dns = 1;
 		}
 	} else {
 /*
@@ -191,15 +194,8 @@ unsigned int retry_count;
 */
 		if (match_name_list(rhost)) {
 			deinit_module();
-			return PAM_IGNORE;
+			return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 		}
-	}
-
-/* if not blocking all and the user is known, let go */
-	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
-		logmsg(LOG_DEBUG, "ignoring known user %s", user);
-		deinit_module();
-		return PAM_IGNORE;
 	}
 	if (rhost != NULL) {
 		struct addrinfo *addr_info, *addr_p;
@@ -210,19 +206,11 @@ unsigned int retry_count;
 		int whitelisted;
 
 		if ((addr_info = get_addr_info(rhost)) == NULL) {		/* missing reverse DNS entry */
-			deinit_module();
-
 			if (options & OPT_MISSING_REVERSE)
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (allowed)", rhost);
 			else {
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (denied)", rhost);
-/*
-	FIXME
-	The IPaddress of the attacker is not getting blocked ever (!) in this case
-	because we're returning right now
-*/
-				deinit_module();
-				return PAM_AUTH_ERR;
+				suspicious_dns = 1;
 			}
 		}
 /* for every address that this host is known for, check for whitelist entry */
@@ -254,13 +242,13 @@ unsigned int retry_count;
 
 					freeaddrinfo(addr_info);
 					deinit_module();
-					return PAM_IGNORE;
+					return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 			}
 /* host is whitelisted by an allow line in the config file, so exit */
 			if (whitelisted) {
 				freeaddrinfo(addr_info);
 				deinit_module();
-				return PAM_IGNORE;
+				return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 			}
 		}
 /* open the database */
@@ -271,7 +259,7 @@ unsigned int retry_count;
 				       gdbm_strerror(gdbm_errno));
 				freeaddrinfo(addr_info);
 				deinit_module();
-				return PAM_IGNORE;
+				return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 			}
 			logmsg(LOG_DEBUG,"waiting to open db, try %d",retry_count);
 			usleep(1000);
@@ -356,7 +344,7 @@ unsigned int retry_count;
 		gdbm_close(dbf);
 	}
 	deinit_module();
-	return PAM_IGNORE;
+	return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 }
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {
