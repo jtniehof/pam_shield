@@ -55,14 +55,22 @@ sites. It will use null-routing to do so.
 Configuring PAM
 ---------------
 The PAM config files usually reside under /etc/pam.d/
-The exact content of the PAM config files tends to differ between
-distributions.
-If you want to use pam_shield for all services, edit /etc/pam.d/common-auth.
-Add the line
+Note that exact content of the PAM config files tends to differ between
+distributions. The config given here is an example.
 
-	auth optional   pam_shield.so
+pam_shield.so must be included in the PAM configuration file for any
+services where it might be useful. For example, for sshd it could be
+as follows:
 
-and that's that.
+/etc/pam.d/sshd:
+#%PAM-1.0
+auth       optional     pam_shield.so
+auth       include      system-auth
+account    required     pam_account.so
+password   include      common-password
+session    include      common-session
+session    requisite    pam_somemodule.so
+
 Make sure it is not the only auth module that is listed for the service.
 pam_shield does not do any authentication by itself and trying to run it
 as standalone auth module will leave your system wide open.
