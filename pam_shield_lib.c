@@ -1,7 +1,7 @@
 /*
 	pam_shield_lib.c	WJ106
 
-    pam_shield 0.9.2 WJ107
+    pam_shield 0.9.4 WJ107
     Copyright (C) 2007  Walter de Jong <walter@heiho.net>
     OPT_FORCE copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
@@ -45,7 +45,7 @@
 #include <errno.h>
 #include <gdbm.h>
 
-#define PAM_SHIELD_VERSION		"0.9.2"
+#define PAM_SHIELD_VERSION		"0.9.4"
 
 #define DEFAULT_CONFFILE		"/etc/security/shield.conf"
 #define DEFAULT_DBFILE			"/var/lib/pam_shield/db"

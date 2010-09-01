@@ -1,7 +1,7 @@
 /*
 	shield_purge.c	WJ107
 
-    pam_shield 0.9.2 WJ107
+    pam_shield 0.9.4 WJ107
     Copyright (C) 2007  Walter de Jong <walter@heiho.net>
     -f option Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
