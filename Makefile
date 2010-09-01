@@ -51,7 +51,9 @@ install: all
 	$(INSTALL) -o root -g root -m 755 -T pam_shield.cron ${crondir}/pam-shield
 	$(INSTALL) -o root -g root -m 755 shield-trigger.sh ${bindir}
 	$(INSTALL) -s -o root -g root -m 755 shield-purge ${bindir}
-	$(INSTALL) -o root -g root -m 644 shield.conf ${confdir}
+	if ! test -e ${confdir}/shield.conf; then \
+	$(INSTALL) -o root -g root -m 644 shield.conf ${confdir} ; \
+	fi
 	$(MKDIR) -p -m 700 /var/lib/pam_shield
 
 uninstall:
