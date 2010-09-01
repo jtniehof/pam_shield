@@ -49,7 +49,11 @@ va_list varargs;
 	if (level == LOG_DEBUG && !(options & OPT_DEBUG))
 		return;
 
+#ifdef LOG_AUTHPRIV
+	openlog("PAM-shield", LOG_PID, LOG_AUTHPRIV);
+#else
 	openlog("PAM-shield", LOG_PID, LOG_AUTH);
+#endif
 
 	va_start(varargs, fmt);
 	vsyslog(level, fmt, varargs);
