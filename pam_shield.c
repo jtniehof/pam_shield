@@ -323,6 +323,13 @@ struct passwd *pwd;
 				logmsg(LOG_DEBUG, "%u times from %s", record->count, rhost);
 
 /* too many in the interval, so trigger */
+/*
+	FIXME
+	What if trigger_active is falsely set? (this happens all the time ... system reboots, admins that delete
+	blackholed routes, etc)
+
+	trigger "add" is also subject to a race, the same IP may be blocked multiple times
+*/
 				if (!record->trigger_active && record->count >= max_conns) {
 					record->trigger_active = this_time;
 					run_trigger("add", record);
