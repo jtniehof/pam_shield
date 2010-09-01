@@ -327,6 +327,10 @@ struct passwd *pwd;
 	trigger "add" is also subject to a race, the same IP may be blocked multiple times
 */
 				if (!record->trigger_active && record->count >= max_conns) {
+/*
+	FIXME
+	if run_trigger fails ("Command not found"), trigger_active must not be set
+*/
 					record->trigger_active = this_time;
 					run_trigger("add", record);
 				}
