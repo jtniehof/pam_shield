@@ -36,7 +36,7 @@ null_route() {
 
 	if [ -x /sbin/ip ]
 	then
-		/sbin/ip $INET route $1 $2 via $GW dev lo
+		/sbin/ip $INET route $1 blackhole $2
 	else
 		if [ ! -z "$INET" ]
 		then
