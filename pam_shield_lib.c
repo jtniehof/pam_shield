@@ -45,7 +45,7 @@
 #include <errno.h>
 #include <gdbm.h>
 
-#define PAM_SHIELD_VERSION		"0.9.4"
+#define PAM_SHIELD_VERSION		"0.9.4-beta"
 
 #define DEFAULT_CONFFILE		"/etc/security/shield.conf"
 #define DEFAULT_DBFILE			"/var/lib/pam_shield/db"

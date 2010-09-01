@@ -176,6 +176,13 @@ struct passwd *pwd;
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (allowed)", rhost);
 		else {
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (denied)", rhost);
+/*
+	FIXME
+	When the module is configured as "optional", this does nothing and the attacker
+	never gets blocked
+	
+	When the module is "required", the attacker also never gets blocked, he's just always denied
+*/
 			deinit_module();
 			return PAM_AUTH_ERR;
 		}
@@ -210,6 +217,13 @@ struct passwd *pwd;
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (allowed)", rhost);
 			else {
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (denied)", rhost);
+/*
+	FIXME
+	When the module is configured as "optional", this does nothing and the attacker
+	never gets blocked
+	
+	When the module is "required", the attacker also never gets blocked, he's just always denied
+*/
 				deinit_module();
 				return PAM_AUTH_ERR;
 			}
