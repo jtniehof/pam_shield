@@ -56,30 +56,73 @@ Configuring PAM
 ---------------
 The PAM config files usually reside under /etc/pam.d/
 Note that exact content of the PAM config files tends to differ between
-distributions. The config given here is an example.
+distributions.
 
 pam_shield.so must be included in the PAM configuration file for any
-services where it might be useful. For example, for sshd it could be
-as follows:
+services where it might be useful. In general, /etc/pam.d/sshd.
 
-/etc/pam.d/sshd:
-#%PAM-1.0
-auth       optional     pam_shield.so
-auth       include      system-auth
-account    required     pam_account.so
-password   include      common-password
-session    include      common-session
-session    requisite    pam_somemodule.so
+Different configurations are possible, depending on your taste.
+There is a certain "play" between the config of your PAM stack and what
+you put into the shield.conf file, so pay attention.
+Here are some examples of configurations:
 
-Make sure it is not the only auth module that is listed for the service.
-pam_shield does not do any authentication by itself and trying to run it
-as standalone auth module will leave your system wide open.
+1. Block many failing login attempts
+
+ auth sufficient pam_unix.so
+ auth required   pam_shield.so
+
+Explanation: good logins will succeed by pam_unix, and pam_shield will
+not even be invoked. Bad logins fall through and are caught by pam_shield,
+which may activate null-routing for the failing IPaddress.
+The shield.conf option 'block unknown-users' will do what it says, and
+'block all-users' will activate the IP block even for known users _if_
+there are many failed logins for that user.
+The options 'allow_missing_dns' and 'allow_missing_reverse' do not do
+anything useful in this configuration.
+
+2. Block suspicious looking folks
+
+ auth requisite pam_shield.so
+ auth include   system-auth
+
+Explanation: Every login attempt will be screened by pam_shield. If all
+looks well, the system may continue to authenticate the user as usual.
+If all is not well, pam_shield will abort the login immediately.
+The shield.conf options 'allow_missing_dns' and 'allow_missing_reverse'
+play an important role here. If you enable 'block all-users', it is
+easy to lock yourself out from a machine that has no DNS entry.
+Note that if you 'block all-users' with this config, you will also block
+legitimate users that do too many logins in a short period of time.
+(This could be legitimate logins like when a user does:
+ for file in *; do scp $file remotemachine: ; done)
+
+NB. If there are other "required" modules in the stack that must run no
+    matter what, you may change "requisite" to "required".
+
+3. Block login attempts no matter what
+
+ auth optional pam_shield.so
+ auth include  common-auth
+
+Explanation: Let pam_shield do its job, and then do the usual stuff to
+authenticate the user.
+This is not an optimal configuration. "optional" means that pam_shield can
+not abort the login attempt (unless it is already null-routing the IP).
+The shield.conf parameters 'allow_missing_dns' and 'allow_missing_reverse'
+have no useful meaning here, they don't do anything in this configuration.
+
+So, if you want to be nice to the users of your system, go for config #1.
+If you are more paranoid, go for config #2.
+Whatever you do, make sure pam_shield is not the only auth module that
+is listed for the service. pam_shield does not do any authentication by
+itself and trying to run it as standalone auth module will leave your system
+wide open.
 
 
 Testing pam_shield
 ------------------
 When testing pam_shield, be wary that you are going to lock yourself out.
-The safest way to test it, is to have a console with root prompt open
+The safest way to test it, is to have console access with a root prompt open
 just in case things go wrong and you can not access your machine anymore.
 
 Edit /etc/security/shield.conf and set max_conns to a small value
