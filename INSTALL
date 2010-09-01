@@ -14,9 +14,13 @@ correctly, will render it useless.
 Building pam_shield
 -------------------
 
-Pre-reqs:
+Pre-reqs on a Debian or Ubuntu-like system:
 	libpam0g-dev
 	libgdbm-dev
+
+Pre-reqs on a RedHat or Fedora-like system:
+    pam-devel
+    gdbm-devel
 
 
 There is no 'configure' script.
