@@ -1,3 +1,12 @@
+1 Sept 2010:
+- bugfix: treat missing DNS parameters properly
+- bugfix: for race of blocking same IP multiple times
+- bugfix: check for exit code of run_trigger
+- read_config() may return an (syntax) error, but continue anyway
+  and try to make the best of it
+- use ip blockhole routing
+- added lots of explanatory text to INSTALL
+
 20 April 2010: release 0.9.3
 Bugfixes by Jonathan Niehof:
 - fix memory leak in purger
