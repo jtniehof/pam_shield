@@ -29,6 +29,7 @@ Edit the Makefile to customize the installation directories.
 
 pam_shield consists of:
 - one PAM module:   /lib/security/pam_shield.so
+                 or /lib64/security/pam_shield.so on 64-bit systems
 - one binary:       /usr/sbin/shield-purge
 - one shell script: /usr/sbin/shield-trigger.sh
 - one cron script:  /etc/cron.daily/pam-shield
