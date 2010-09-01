@@ -177,6 +177,15 @@ int suspicious_dns;
 	logmsg(LOG_DEBUG, "remotehost %s", (rhost == NULL) ? "(unknown)" : rhost);
 
 /*
+	if rhost is NULL, pam_shield is probably being used for a local service here
+	Because pam_shield only makes sense in a networked environment, bail out now
+*/
+	if (rhost == NULL) {
+		deinit_module();
+		return PAM_IGNORE;
+	}
+
+/*
 	if rhost is completely numeric, then it has no DNS entry
 */
 	suspicious_dns = 0;
@@ -197,7 +206,7 @@ int suspicious_dns;
 			return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 		}
 	}
-	if (rhost != NULL) {
+	do {
 		struct addrinfo *addr_info, *addr_p;
 		unsigned char addr_family;
 		char ipbuf[INET6_ADDRSTRLEN], *saddr;
@@ -342,7 +351,8 @@ int suspicious_dns;
 		}
 		freeaddrinfo(addr_info);
 		gdbm_close(dbf);
-	}
+	} while(0);
+
 	deinit_module();
 	return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 }
