@@ -55,6 +55,8 @@ See Also
  * Linux PAM documentation:
    http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/Linux-PAM_SAG.html
 
+ * fail2ban: http://www.fail2ban.org/
+
  * daemon_shield: https://sourceforge.net/projects/daemonshield/
 
  * BlockHosts: http://www.aczoom.com/cms/blockhosts/
