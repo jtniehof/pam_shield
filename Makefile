@@ -2,10 +2,14 @@
 #	pam_shield	WJ106
 #
 
-bindir=/usr/sbin
-confdir=/etc/security
-pamdir=/lib/security
-crondir=/etc/cron.daily
+# for 32-bit systems:
+#pamdir = /lib/security
+# for 64-bit systems:
+pamdir = /lib64/security
+
+bindir = /usr/sbin
+confdir = /etc/security
+crondir = /etc/cron.daily
 
 CC = gcc
 LD = ld
