@@ -78,6 +78,10 @@ as standalone auth module will leave your system wide open.
 
 Testing pam_shield
 ------------------
+When testing pam_shield, be wary that you are going to lock yourself out.
+The safest way to test it, is to have a console with root prompt open
+just in case things go wrong and you can not access your machine anymore.
+
 Edit /etc/security/shield.conf and set max_conns to a small value
 like 3 or so. Set the interval and the retention period both to 60 seconds.
 Set debug on.
