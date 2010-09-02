@@ -203,7 +203,7 @@ int suspicious_dns;
 */
 		if (match_name_list(rhost)) {
 			deinit_module();
-			return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+			return PAM_IGNORE;
 		}
 	}
 	do {
@@ -257,7 +257,7 @@ int suspicious_dns;
 			if (whitelisted) {
 				freeaddrinfo(addr_info);
 				deinit_module();
-				return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+				return PAM_IGNORE;
 			}
 		}
 /* open the database */
