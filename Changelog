@@ -1,3 +1,9 @@
+12 Jan 2011:
+- release 0.9.5
+Bugfix by Heino Gutschmidt:
+- shield_purge would delete entries that were still active,
+  causing the delete-rule trigger never to be executed
+
 4 Sept 2010:
 - release 0.9.4
 

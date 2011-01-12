@@ -1,8 +1,8 @@
 /*
 	shield_purge.c	WJ107
 
-    pam_shield 0.9.4 WJ107
-    Copyright (C) 2007,2010  Walter de Jong <walter@heiho.net>
+    pam_shield 0.9.5 WJ107
+    Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
     -f option Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ static void usage(char *progname) {
 "are welcome to redistribute it under certain conditions.  See the GNU\n"
 "General Public Licence for details.\n"
 "\n"
-"Copyright (C) 2007,2010 by Walter de Jong <walter@heiho.net>\n"
+"Copyright (C) 2007-2011 by Walter de Jong <walter@heiho.net>\n"
 "Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>\n");
 	exit(1);
 }
@@ -202,7 +202,7 @@ int deleted=0; /*If any key deleted, order changes; must revisit all keys*/
 
 /* store any changes */
 			if (expire_record(record)) {
-				if (!record->count) {
+				if (!record->count && !record->trigger_active) {
 					logmsg(LOG_DEBUG, "expiring entry");
 					if (!(options & OPT_DRYRUN)) {
 						gdbm_delete(dbf, key);
