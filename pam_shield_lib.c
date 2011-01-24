@@ -3,7 +3,6 @@
 
     pam_shield 0.9.2 WJ107
     Copyright (C) 2007  Walter de Jong <walter@heiho.net>
-    OPT_FORCE copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,7 +61,6 @@
 #define OPT_LISTDB				8
 #define OPT_MISSING_DNS			0x10	/* allow missing DNS */
 #define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
-#define OPT_FORCE			0x40	/* purge unexpired entries */
 
 static int options = 0;
 static GDBM_FILE dbf;
