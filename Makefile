@@ -2,10 +2,14 @@
 #	pam_shield	WJ106
 #
 
-bindir=/usr/sbin
-confdir=/etc/security
-pamdir=/lib/security
-crondir=/etc/cron.daily
+# for 32-bit systems:
+#pamdir = /lib/security
+# for 64-bit systems:
+pamdir = /lib64/security
+
+bindir = /usr/sbin
+confdir = /etc/security
+crondir = /etc/cron.daily
 
 CC = gcc
 LD = ld
@@ -45,15 +49,17 @@ dep depend .depend:
 install: all
 	$(INSTALL) -s -o root -g root -m 644 pam_shield.so ${pamdir}
 	$(INSTALL) -o root -g root -m 755 -T pam_shield.cron ${crondir}/pam-shield
-	$(INSTALL) -o root -g root -m 755 shield-trigger.sh ${bindir}
+	$(INSTALL) -o root -g root -m 755 shield-trigger ${bindir}
 	$(INSTALL) -s -o root -g root -m 755 shield-purge ${bindir}
-	$(INSTALL) -o root -g root -m 644 shield.conf ${confdir}
+	if ! test -e ${confdir}/shield.conf; then \
+	$(INSTALL) -o root -g root -m 644 shield.conf ${confdir} ; \
+	fi
 	$(MKDIR) -p -m 700 /var/lib/pam_shield
 
 uninstall:
 	$(RM) ${pamdir}/pam_shield.so
 	$(RM) ${crondir}/pam-shield
-	$(RM) ${bindir}/shield-trigger.sh
+	$(RM) ${bindir}/shield-trigger
 	$(RM) ${bindir}/shield-purge
 	$(RM) ${confdir}/shield.conf
 	$(RM) -r /var/lib/pam_shield

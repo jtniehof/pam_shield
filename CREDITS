@@ -1,4 +1,5 @@
 Credit goes to:
 
+Jon Niehof for submitting patches: many bugfixes
 Dag Wieers for reporting bugs
 Jan Engelhardt for submitting a patch that makes pam_shield much better

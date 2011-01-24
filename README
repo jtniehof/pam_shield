@@ -1,4 +1,4 @@
-pam_shield by Walter de Jong <walter@heiho.net> (C) 2007
+pam_shield by Walter de Jong <walter@heiho.net> (C) 2007-2011
 
 pam_shield COMES WITH NO WARRANTY. pam_shield IS FREE SOFTWARE.
 pam_shield is distributed under terms described in the GNU General Public
@@ -36,7 +36,7 @@ password guessing. pam_shield aims to detect and block these "kiddies".
    during a period of time. If there are too many attempts, it triggers
    and blocks the remote host.
 
- * To block and unblock IPs, pam_shield runs the shield-trigger.sh script.
+ * To block and unblock IPs, pam_shield runs the shield-trigger script.
    By default, it uses null-routing to block hosts.
    A script for using iptables is also provided, but you should customize
    this script to fit your situation if you decide to use it.
@@ -54,6 +54,8 @@ See Also
 
  * Linux PAM documentation:
    http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/Linux-PAM_SAG.html
+
+ * fail2ban: http://www.fail2ban.org/
 
  * daemon_shield: https://sourceforge.net/projects/daemonshield/
 

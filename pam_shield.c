@@ -1,8 +1,9 @@
 /*
 	pam_shield.c	WJ106
 
-    pam_shield 0.9.2 WJ107
-    Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+    pam_shield 0.9.5 WJ107
+    Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
+    Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +49,11 @@ va_list varargs;
 	if (level == LOG_DEBUG && !(options & OPT_DEBUG))
 		return;
 
+#ifdef LOG_AUTHPRIV
+	openlog("PAM-shield", LOG_PID, LOG_AUTHPRIV);
+#else
 	openlog("PAM-shield", LOG_PID, LOG_AUTH);
+#endif
 
 	va_start(varargs, fmt);
 	vsyslog(level, fmt, varargs);
@@ -131,6 +136,8 @@ int err;
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
 char *user, *rhost;
 struct passwd *pwd;
+unsigned int retry_count;
+int suspicious_dns;
 
 	if (init_module())
 		return PAM_IGNORE;
@@ -138,10 +145,11 @@ struct passwd *pwd;
 	get_options(argc, (char **)argv);
 	logmsg(LOG_DEBUG, "this is version " PAM_SHIELD_VERSION);
 
-	if (read_config()) {
-		deinit_module();
-		return PAM_IGNORE;
-	}
+/*
+	read_config() may fail (due to syntax errors, etc.), try to make the best of it
+	by continuing anyway
+*/
+	read_config();
 
 /* get the username */
 	if (pam_get_item(pamh, PAM_USER, (const void **)(void *)&user) != PAM_SUCCESS)
@@ -151,6 +159,13 @@ struct passwd *pwd;
 		user = NULL;
 
 	logmsg(LOG_DEBUG, "user %s", (user == NULL) ? "(unknown)" : user);
+
+/* if not blocking all and the user is known, let go */
+	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
+		logmsg(LOG_DEBUG, "ignoring known user %s", user);
+		deinit_module();
+		return PAM_IGNORE;
+	}
 
 /* get the remotehost address */
 	if (pam_get_item(pamh, PAM_RHOST, (const void **)(void *)&rhost) != PAM_SUCCESS)
@@ -162,16 +177,25 @@ struct passwd *pwd;
 	logmsg(LOG_DEBUG, "remotehost %s", (rhost == NULL) ? "(unknown)" : rhost);
 
 /*
+	if rhost is NULL, pam_shield is probably being used for a local service here
+	Because pam_shield only makes sense in a networked environment, bail out now
+*/
+	if (rhost == NULL) {
+		deinit_module();
+		return PAM_IGNORE;
+	}
+
+/*
 	if rhost is completely numeric, then it has no DNS entry
 */
+	suspicious_dns = 0;
 	if (strspn(rhost, "0123456789.") == strlen(rhost)
 		|| strspn(rhost, "0123456789:abcdefABCDEF") == strlen(rhost)) {
 		if (options & OPT_MISSING_DNS)
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (allowed)", rhost);
 		else {
 			logmsg(LOG_DEBUG, "missing DNS entry for %s (denied)", rhost);
-			deinit_module();
-			return PAM_AUTH_ERR;
+			suspicious_dns = 1;
 		}
 	} else {
 /*
@@ -182,14 +206,7 @@ struct passwd *pwd;
 			return PAM_IGNORE;
 		}
 	}
-
-/* if not blocking all and the user is known, let go */
-	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
-		logmsg(LOG_DEBUG, "ignoring known user %s", user);
-		deinit_module();
-		return PAM_IGNORE;
-	}
-	if (rhost != NULL) {
+	do {
 		struct addrinfo *addr_info, *addr_p;
 		unsigned char addr_family;
 		char ipbuf[INET6_ADDRSTRLEN], *saddr;
@@ -198,14 +215,11 @@ struct passwd *pwd;
 		int whitelisted;
 
 		if ((addr_info = get_addr_info(rhost)) == NULL) {		/* missing reverse DNS entry */
-			deinit_module();
-
 			if (options & OPT_MISSING_REVERSE)
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (allowed)", rhost);
 			else {
 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (denied)", rhost);
-				deinit_module();
-				return PAM_AUTH_ERR;
+				suspicious_dns = 1;
 			}
 		}
 /* for every address that this host is known for, check for whitelist entry */
@@ -237,7 +251,7 @@ struct passwd *pwd;
 
 					freeaddrinfo(addr_info);
 					deinit_module();
-					return PAM_IGNORE;
+					return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 			}
 /* host is whitelisted by an allow line in the config file, so exit */
 			if (whitelisted) {
@@ -247,11 +261,18 @@ struct passwd *pwd;
 			}
 		}
 /* open the database */
-		if ((dbf = gdbm_open(dbfile, 512, GDBM_WRCREAT, (mode_t)0600, fatal_func)) == NULL) {
-			logmsg(LOG_ERR, "failed to open gdbm file '%s' : %s", dbfile, gdbm_strerror(gdbm_errno));
-			freeaddrinfo(addr_info);
-			deinit_module();
-			return PAM_IGNORE;
+		retry_count=0;
+		while ((dbf = gdbm_open(dbfile, 512, GDBM_WRCREAT, (mode_t)0600, fatal_func)) == NULL) {
+			if (gdbm_errno != GDBM_CANT_BE_WRITER || retry_count>500) {
+				logmsg(LOG_ERR, "failed to open gdbm file '%s' : %s", dbfile,
+				       gdbm_strerror(gdbm_errno));
+				freeaddrinfo(addr_info);
+				deinit_module();
+				return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+			}
+			logmsg(LOG_DEBUG,"waiting to open db, try %d",retry_count);
+			usleep(1000);
+			retry_count++;
 		}
 /* for every address that this host is known for, check the database */
 		for(addr_p = addr_info; addr_p != NULL; addr_p = addr_p->ai_next) {
@@ -294,12 +315,15 @@ struct passwd *pwd;
 				record->timestamps[record->count++] = this_time;
 
 				logmsg(LOG_DEBUG, "%u times from %s", record->count, rhost);
+/*
+	too many in the interval, so trigger
 
-/* too many in the interval, so trigger */
-				if (!record->trigger_active && record->count >= max_conns) {
+	trigger "add" is subject to a race, so try to be smart about it
+	and do not add the same block within 20 seconds
+*/
+				if (record->count >= max_conns && this_time - record->trigger_active > 20
+					&& !run_trigger("add", record))
 					record->trigger_active = this_time;
-					run_trigger("add", record);
-				}
 			} else {
 				if ((record = new_db_record(max_conns)) != NULL) {
 					record->addr_family = addr_family;
@@ -327,9 +351,10 @@ struct passwd *pwd;
 		}
 		freeaddrinfo(addr_info);
 		gdbm_close(dbf);
-	}
+	} while(0);
+
 	deinit_module();
-	return PAM_IGNORE;
+	return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
 }
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {

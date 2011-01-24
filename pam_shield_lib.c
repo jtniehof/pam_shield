@@ -1,8 +1,9 @@
 /*
 	pam_shield_lib.c	WJ106
 
-    pam_shield 0.9.2 WJ107
-    Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+    pam_shield 0.9.5 WJ107
+    Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
+    OPT_FORCE copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@
 #include <errno.h>
 #include <gdbm.h>
 
-#define PAM_SHIELD_VERSION		"0.9.2"
+#define PAM_SHIELD_VERSION		"0.9.5"
 
 #define DEFAULT_CONFFILE		"/etc/security/shield.conf"
 #define DEFAULT_DBFILE			"/var/lib/pam_shield/db"
@@ -61,6 +62,7 @@
 #define OPT_LISTDB				8
 #define OPT_MISSING_DNS			0x10	/* allow missing DNS */
 #define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
+#define OPT_FORCE			0x40	/* purge unexpired entries */
 
 static int options = 0;
 static GDBM_FILE dbf;
@@ -504,6 +506,7 @@ int bits;
 */
 static int read_config(void) {
 FILE *f;
+struct stat statbuf;
 char buf[MAX_LINE], *p, *endp;
 int line_no, err;
 long multiplier;
@@ -624,6 +627,10 @@ long multiplier;
 				logmsg(LOG_CRIT, "out of memory");
 				err--;
 			}
+			if (stat(trigger_cmd, &statbuf) == -1) {
+				logmsg(LOG_ALERT, "%s:%d: command '%s' not found", conffile, line_no, trigger_cmd);
+				err--;
+			}
 			continue;
 		}
 		if (!strcmp(buf, "max_conns")) {
@@ -730,8 +737,12 @@ pid_t pid;
 		exit(-1);
 	} else {
 		pid_t err;
+		int status;
 
-		while((err = waitpid(pid, NULL, 0)) > 0);
+		while((err = waitpid(pid, &status, 0)) > 0);
+
+		if (WEXITSTATUS(status) != 0)
+			return -1;
 	}
 	return 0;
 }

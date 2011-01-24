@@ -1,9 +1,9 @@
 #! /bin/sh
 #
-#	shield-trigger.sh	WJ107
+#	shield-trigger	WJ107
 #
-#   pam_shield 0.9.2  WJ107
-#   Copyright (C) 2007  Walter de Jong <walter@heiho.net>
+#   pam_shield 0.9.5  WJ107
+#   Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -20,30 +20,30 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-run_iptables() {
+null_route() {
 #
 #	louzy detection of IPv4 or IPv6 address
 #
-	IPT=`echo "$2" | sed 's/[0-9\.]//g'`
-	if [ -z "$IPT" ]
+	INET=`echo "$2" | sed 's/[0-9\.]//g'`
+	if [ -z "$INET" ]
 	then
-		IPT=iptables
+		INET=""
+		GW="127.0.0.1"
 	else
-		IPT=ip6tables
+		INET="-f inet6"
+		GW="::1"
 	fi
 
-#
-#	CUSTOMIZE THIS RULE
-#
-#	$1 is the iptables command: -A or -D
-#	$2 is the IP number
-#
-#	* put in the correct chain name (pam_shield or INPUT)
-#	* put in the correct network interface name (eth0)
-#	* put in the correct port number (22 is ssh)
-#	* add additional rules for additional services as needed
-#
-	"$IPT" "$1" INPUT -p tcp -s "$2" --destination-port 22 -j pam_shield
+	if [ -x /sbin/ip ]
+	then
+		/sbin/ip $INET route $1 blackhole $2
+	else
+		if [ ! -z "$INET" ]
+		then
+			INET="-A inet6"
+		fi
+		/sbin/route $INET $1 -host $2 gw $GW dev lo
+	fi
 
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...
@@ -55,10 +55,10 @@ run_iptables() {
 
 
 usage() {
-	echo "shield-trigger.sh WJ107"
+	echo "shield-trigger WJ107"
 	echo "usage: ${0##*/} [add|del] <IP number>"
 	echo
-	echo "shield-trigger.sh is normally called by the pam_shield PAM module"
+	echo "shield-trigger is normally called by the pam_shield PAM module"
 	exit 1
 }
 
@@ -72,16 +72,16 @@ fi
 
 case "$1" in
 	add)
-		logger -i -t shield-trigger -p auth.info "blocking $2"
+		logger -i -t shield-trigger -p authpriv.info "blocking $2"
 
-		CMD="-A"
+		CMD="add"
 		IP=$2
 		;;
 
 	del)
-		logger -i -t shield-trigger -p auth.info "unblocking $2"
+		logger -i -t shield-trigger -p authpriv.info "unblocking $2"
 
-		CMD="-D"
+		CMD="del"
 		IP=$2
 		;;
 
@@ -90,6 +90,8 @@ case "$1" in
 		;;
 esac
 
-run_iptables "$CMD" "$IP"
+null_route "$CMD" "$IP"
+
+exit 0		# make pam_shield happy
 
 # EOB
