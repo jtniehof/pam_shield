@@ -23,12 +23,17 @@ PAM_LIB = -lpam
 GDBM_LIB = -lgdbm
 LIBS =
 
-.c.o:
-	$(CC) $(CFLAGS) -c $<
+.PHONY: all dep depend clean mrproper install uninstall
 
 all: .depend pam_shield.so shield-purge
 
-include .depend
+.depend dep depend: pam_shield.c shield_purge.c
+	$(CC) -M pam_shield.c shield_purge.c > .depend
+
+-include .depend
+
+.c.o: .depend
+	$(CC) $(CFLAGS) -c $<
 
 pam_shield.so: pam_shield.o
 	$(CC) $(LFLAGS) -o pam_shield.so pam_shield.o $(PAM_LIB) $(GDBM_LIB) $(LIBS)
@@ -41,10 +46,7 @@ clean:
 
 mrproper: clean
 	$(RM) db
-	> .depend
-
-dep depend .depend:
-	$(CC) -M pam_shield.c shield_purge.c > .depend
+	$(RM) .depend
 
 install: all
 	$(INSTALL) -s -o root -g root -m 644 pam_shield.so ${pamdir}
