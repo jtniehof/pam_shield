@@ -3,9 +3,9 @@
 #
 
 # for 32-bit systems:
-#pamdir = /lib/security
+pamdir = /lib/security
 # for 64-bit systems:
-pamdir = /lib64/security
+#pamdir = /lib64/security
 
 bindir = /usr/sbin
 confdir = /etc/security
@@ -42,7 +42,7 @@ shield-purge: shield_purge.o pam_shield_lib.o
 	$(CC) shield_purge.o pam_shield_lib.o -o shield-purge $(GDBM_LIB) $(LIBS)
 
 clean:
-	$(RM) core pam_shield.so pam_shield.o shield_purge.o shield-purge
+	$(RM) core pam_shield.so pam_shield.o shield_purge.o shield-purge pam_shield_lib.o
 
 mrproper: clean
 	$(RM) db
