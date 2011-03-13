@@ -25,10 +25,10 @@
 #include <libgen.h>
 #include <getopt.h>
 
-#include "pam_shield_lib.c"
+#include "pam_shield_lib.h"
 
 
-static void logmsg(int level, const char *fmt, ...) {
+void logmsg(int level, const char *fmt, ...) {
 va_list varargs;
 
 	if (level == LOG_DEBUG && !(options & OPT_DEBUG))

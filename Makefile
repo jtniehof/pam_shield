@@ -27,19 +27,19 @@ LIBS =
 
 all: .depend pam_shield.so shield-purge
 
-.depend dep depend: pam_shield.c shield_purge.c
-	$(CC) -M pam_shield.c shield_purge.c > .depend
+.depend dep depend: pam_shield.c shield_purge.c pam_shield_lib.c
+	$(CC) -M pam_shield.c shield_purge.c pam_shield_lib.c > .depend
 
 -include .depend
 
 .c.o: .depend
 	$(CC) $(CFLAGS) -c $<
 
-pam_shield.so: pam_shield.o
-	$(CC) $(LFLAGS) -o pam_shield.so pam_shield.o $(PAM_LIB) $(GDBM_LIB) $(LIBS)
+pam_shield.so: pam_shield.o pam_shield_lib.o
+	$(CC) $(LFLAGS) -o pam_shield.so pam_shield.o pam_shield_lib.o $(PAM_LIB) $(GDBM_LIB) $(LIBS)
 
-shield-purge: shield_purge.o
-	$(CC) shield_purge.o -o shield-purge $(GDBM_LIB) $(LIBS)
+shield-purge: shield_purge.o pam_shield_lib.o
+	$(CC) shield_purge.o pam_shield_lib.o -o shield-purge $(GDBM_LIB) $(LIBS)
 
 clean:
 	$(RM) core pam_shield.so pam_shield.o shield_purge.o shield-purge
