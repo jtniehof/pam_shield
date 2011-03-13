@@ -45,48 +45,32 @@
 #include <errno.h>
 #include <gdbm.h>
 
-#define PAM_SHIELD_VERSION		"0.9.5"
+#include "pam_shield_lib.h"
 
-#define DEFAULT_CONFFILE		"/etc/security/shield.conf"
-#define DEFAULT_DBFILE			"/var/lib/pam_shield/db"
-#define DEFAULT_TRIGGER_CMD		"/usr/sbin/pam_shield-trigger"
-#define DEFAULT_MAX_CONNS		10
-#define DEFAULT_INTERVAL		60L
-#define DEFAULT_RETENTION		(3600L * 24L)
+#pragma GCC visibility push(hidden)
 
-#define MAX_LINE				1024
+int options = 0;
+GDBM_FILE dbf;
 
-#define OPT_DEBUG				1
-#define OPT_BLOCK_ALL			2		/* block all, including known users */
-#define OPT_DRYRUN				4
-#define OPT_LISTDB				8
-#define OPT_MISSING_DNS			0x10	/* allow missing DNS */
-#define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
-#define OPT_FORCE			0x40	/* purge unexpired entries */
-
-static int options = 0;
-static GDBM_FILE dbf;
-
-static char *conffile = NULL;
-static char *dbfile = NULL;
-static char *trigger_cmd = NULL;
+char *conffile = NULL;
+char *dbfile = NULL;
+char *trigger_cmd = NULL;
 
 /* white lists of addresses */
-static ip_list *allow_ipv4_list = NULL;
-static ip_list *allow_ipv6_list = NULL;
-static name_list *allow_names = NULL;
+ip_list *allow_ipv4_list = NULL;
+ip_list *allow_ipv6_list = NULL;
+name_list *allow_names = NULL;
 
-static int max_conns = DEFAULT_MAX_CONNS;
-static long interval = DEFAULT_INTERVAL;
-static long retention = DEFAULT_RETENTION;
+int max_conns = DEFAULT_MAX_CONNS;
+long interval = DEFAULT_INTERVAL;
+long retention = DEFAULT_RETENTION;
 
-static time_t this_time;
+time_t this_time;
+
+void logmsg(int level, const char *fmt, ...);
 
 
-static void logmsg(int level, const char *fmt, ...);
-
-
-static ip_list *new_ip_list(void) {
+ip_list *new_ip_list(void) {
 ip_list *ip;
 
 	if ((ip = (ip_list *)malloc(sizeof(ip_list))) == NULL)
@@ -96,7 +80,7 @@ ip_list *ip;
 	return ip;
 }
 
-static void destroy_ip_list(ip_list *list) {
+void destroy_ip_list(ip_list *list) {
 ip_list *p;
 
 	while(list != NULL) {
@@ -106,7 +90,7 @@ ip_list *p;
 	}
 }
 
-static void add_ip_list(ip_list **root, ip_list *ip) {
+void add_ip_list(ip_list **root, ip_list *ip) {
 	if (root == NULL || ip == NULL)
 		return;
 
@@ -136,7 +120,7 @@ static void add_ip_list(ip_list **root, ip_list *ip) {
 	try to match an IP number against the allow list
 	returns 1 if it matches
 */
-static int match_ipv4_list(unsigned char *saddr) {
+int match_ipv4_list(unsigned char *saddr) {
 ip_list *ip;
 int i, match;
 
@@ -160,7 +144,7 @@ int i, match;
 	return 0;
 }
 
-static int match_ipv6_list(unsigned char *saddr) {
+int match_ipv6_list(unsigned char *saddr) {
 ip_list *ip;
 int i, match;
 
@@ -187,7 +171,7 @@ int i, match;
 /*
 	name_lists are hostnames and/or network names
 */
-static name_list *new_name_list(char *name) {
+name_list *new_name_list(char *name) {
 name_list *n;
 
 	if (name == NULL || !*name)
@@ -201,7 +185,7 @@ name_list *n;
 	return n;
 }
 
-static void destroy_name_list(name_list *list) {
+void destroy_name_list(name_list *list) {
 name_list *p;
 
 	while(list != NULL) {
@@ -211,7 +195,7 @@ name_list *p;
 	}
 }
 
-static void add_name_list(name_list **root, name_list *n) {
+void add_name_list(name_list **root, name_list *n) {
 	if (root == NULL || n == NULL)
 		return;
 
@@ -229,11 +213,12 @@ static void add_name_list(name_list **root, name_list *n) {
 	*root = n;
 }
 
+
 /*
 	see if 'name' matches our whitelist
 	return 1 if it does
 */
-static int match_name_list(char *name) {
+int match_name_list(char *name) {
 name_list *n;
 
 	if (name == NULL || !*name)
@@ -259,7 +244,7 @@ name_list *n;
 /*
 	initialize variables
 */
-static int init_module(void) {
+int init_module(void) {
 	this_time = time(NULL);
 
 	conffile = strdup(DEFAULT_CONFFILE);
@@ -273,7 +258,7 @@ static int init_module(void) {
 	return 0;
 }
 
-static void deinit_module(void) {
+void deinit_module(void) {
 	if (conffile != NULL) {
 		free(conffile);
 		conffile = NULL;
@@ -299,7 +284,7 @@ static void deinit_module(void) {
 /*
 	strip leading and trailing whitespace from a string
 */
-static void strip(char *str) {
+void strip(char *str) {
 char *p;
 int i;
 
@@ -319,6 +304,7 @@ int i;
 		str[i--] = 0;
 }
 
+
 /*
 	multipliers:
 		1s	second
@@ -332,7 +318,7 @@ int i;
 	default is 1
 	returns 0 on error
 */
-static long get_multiplier(char *str) {
+long get_multiplier(char *str) {
 	if (str == NULL || !*str)
 		return 1L;
 
@@ -371,7 +357,7 @@ static long get_multiplier(char *str) {
 	mask is struct in_addr.saddr, size is the size of the array
 	(4 for IPv4, 16 for IPv6)
 */
-static void ip_bitmask(int bits, unsigned char *mask, int size) {
+void ip_bitmask(int bits, unsigned char *mask, int size) {
 int i, num, rest;
 
 	if (mask == NULL)
@@ -402,7 +388,7 @@ int i, num, rest;
 	allow network/netmask, for both IPv4 and IPv6
 	netmask can be in canonical or decimal notation
 */
-static int allow_ip(char *ipnum, int line_no) {
+int allow_ip(char *ipnum, int line_no) {
 char *netmask;
 ip_list *ip;
 name_list *name;
@@ -504,7 +490,7 @@ int bits;
 /*
 	read configuration file
 */
-static int read_config(void) {
+int read_config(void) {
 FILE *f;
 struct stat statbuf;
 char buf[MAX_LINE], *p, *endp;
@@ -676,7 +662,7 @@ long multiplier;
 	print the IP number of a db_record
 	return NULL on error, or buf on success
 */
-static const char *print_ip(_pam_shield_db_rec_t *record, char *buf, int buflen) {
+const char *print_ip(_pam_shield_db_rec_t *record, char *buf, int buflen) {
 	if (buf == NULL || buflen <= 1)
 		return NULL;
 
@@ -703,7 +689,7 @@ static const char *print_ip(_pam_shield_db_rec_t *record, char *buf, int buflen)
 /*
 	run external command
 */
-static int run_trigger(char *cmd, _pam_shield_db_rec_t *record) {
+int run_trigger(char *cmd, _pam_shield_db_rec_t *record) {
 char ipbuf[INET6_ADDRSTRLEN];
 pid_t pid;
 
@@ -747,7 +733,7 @@ pid_t pid;
 	return 0;
 }
 
-static int expire_record(_pam_shield_db_rec_t *record) {
+int expire_record(_pam_shield_db_rec_t *record) {
 int updated;
 char ipbuf[INET6_ADDRSTRLEN];
 
@@ -783,7 +769,7 @@ char ipbuf[INET6_ADDRSTRLEN];
 /*
 	gdbm has encountered a fatal error
 */
-static void fatal_func(char *str) {
+void fatal_func(char *str) {
 	logmsg(LOG_ERR, "gdbm encountered a fatal error : %s; resetting the database", str);
 
 	gdbm_close(dbf);
@@ -791,4 +777,5 @@ static void fatal_func(char *str) {
 		logmsg(LOG_ERR, "failed to create new gdbm file '%s' : %s", dbfile, gdbm_strerror(gdbm_errno));
 }
 
+#pragma GCC visibility pop
 /* EOB */

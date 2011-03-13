@@ -40,10 +40,11 @@
 
 #include <security/pam_modules.h>
 
-#include "pam_shield_lib.c"
+#include "pam_shield_lib.h"
 
+#pragma GCC visibility push(hidden)
 
-static void logmsg(int level, const char *fmt, ...) {
+void logmsg(int level, const char *fmt, ...) {
 va_list varargs;
 
 	if (level == LOG_DEBUG && !(options & OPT_DEBUG))
@@ -65,7 +66,7 @@ va_list varargs;
 /*
 	Mind that argv[0] is an argument, not the name of the module
 */
-static void get_options(int argc, char **argv) {
+void get_options(int argc, char **argv) {
 int i;
 
 	for(i = 0; i < argc; i++) {
@@ -85,7 +86,7 @@ int i;
 	}
 }
 
-static _pam_shield_db_rec_t *new_db_record(int window_size) {
+_pam_shield_db_rec_t *new_db_record(int window_size) {
 _pam_shield_db_rec_t *record;
 int size;
 
@@ -104,7 +105,7 @@ int size;
 	return record;
 }
 
-static void destroy_db_record(_pam_shield_db_rec_t *record) {
+void destroy_db_record(_pam_shield_db_rec_t *record) {
 	if (record != NULL)
 		free(record);
 }
@@ -114,7 +115,7 @@ static void destroy_db_record(_pam_shield_db_rec_t *record) {
 
 	the return value must be freed with freeaddrinfo()
 */
-static struct addrinfo *get_addr_info(char *rhost) {
+struct addrinfo *get_addr_info(char *rhost) {
 struct addrinfo hints, *res;
 int err;
 
@@ -128,6 +129,8 @@ int err;
 	}
 	return res;
 }
+
+#pragma GCC visibility pop
 
 /*
 	the authenticate function always returns PAM_IGNORE, because this

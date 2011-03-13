@@ -3,9 +3,9 @@
 #
 
 # for 32-bit systems:
-#pamdir = /lib/security
+pamdir = /lib/security
 # for 64-bit systems:
-pamdir = /lib64/security
+#pamdir = /lib64/security
 
 bindir = /usr/sbin
 confdir = /etc/security
@@ -23,28 +23,30 @@ PAM_LIB = -lpam
 GDBM_LIB = -lgdbm
 LIBS =
 
-.c.o:
-	$(CC) $(CFLAGS) -c $<
+.PHONY: all dep depend clean mrproper install uninstall
 
 all: .depend pam_shield.so shield-purge
 
-include .depend
+.depend dep depend: pam_shield.c shield_purge.c pam_shield_lib.c
+	$(CC) -M pam_shield.c shield_purge.c pam_shield_lib.c > .depend
 
-pam_shield.so: pam_shield.o
-	$(CC) $(LFLAGS) -o pam_shield.so pam_shield.o $(PAM_LIB) $(GDBM_LIB) $(LIBS)
+-include .depend
 
-shield-purge: shield_purge.o
-	$(CC) shield_purge.o -o shield-purge $(GDBM_LIB) $(LIBS)
+.c.o: .depend
+	$(CC) $(CFLAGS) -c $<
+
+pam_shield.so: pam_shield.o pam_shield_lib.o
+	$(CC) $(LFLAGS) -o pam_shield.so pam_shield.o pam_shield_lib.o $(PAM_LIB) $(GDBM_LIB) $(LIBS)
+
+shield-purge: shield_purge.o pam_shield_lib.o
+	$(CC) shield_purge.o pam_shield_lib.o -o shield-purge $(GDBM_LIB) $(LIBS)
 
 clean:
-	$(RM) core pam_shield.so pam_shield.o shield_purge.o shield-purge
+	$(RM) core pam_shield.so pam_shield.o shield_purge.o shield-purge pam_shield_lib.o
 
 mrproper: clean
 	$(RM) db
-	> .depend
-
-dep depend .depend:
-	$(CC) -M pam_shield.c shield_purge.c > .depend
+	$(RM) .depend
 
 install: all
 	$(INSTALL) -s -o root -g root -m 644 pam_shield.so ${pamdir}
