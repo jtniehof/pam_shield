@@ -68,6 +68,9 @@ uninstall:
 	$(RM) ${bindir}/shield-trigger
 	$(RM) ${bindir}/shield-purge
 	$(RM) ${confdir}/shield.conf
+	$(RM) ${mandir}/shield-trigger.8.gz
+	$(RM) ${mandir}/shield-trigger-iptables.8.gz
+	$(RM) ${mandir}/shield-purge.8.gz
 	$(RM) -r /var/lib/pam_shield
 
 # EOB
