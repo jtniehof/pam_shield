@@ -52,6 +52,7 @@ mrproper: clean
 install: all
 	$(INSTALL) -s -o root -g root -m 644 pam_shield.so ${pamdir}
 	$(INSTALL) -o root -g root -m 644 man/shield-trigger.8.gz ${mandir}
+	$(INSTALL) -o root -g root -m 644 man/shield-trigger-iptables.8.gz ${mandir}
 	$(INSTALL) -o root -g root -m 644 man/shield-purge.8.gz ${mandir}
 	$(INSTALL) -o root -g root -m 755 -T pam_shield.cron ${crondir}/pam-shield
 	$(INSTALL) -o root -g root -m 755 shield-trigger ${bindir}
