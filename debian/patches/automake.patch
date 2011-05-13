@@ -3,11 +3,9 @@ Origin: Unknown
 Forwarded: no
 Acked-by: Jan Engelhardt <jengelh@computergmbh.de>
 Last-Update: 2010-04-11
-Index: pam-shield-0.9.2/Makefile.am
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ pam-shield-0.9.2/Makefile.am	2009-10-09 09:08:30.000000000 -0400
-@@ -0,0 +1,21 @@
+--- /dev/null
++++ b/Makefile.am
+@@ -0,0 +1,24 @@
 +
 +AUTOMAKE_OPTIONS   = foreign subdir-objects
 +moduledir          = @PAM_MODDIR@
@@ -17,22 +15,23 @@ Index: pam-shield-0.9.2/Makefile.am
 +securitydir        = ${sysconfdir}/security
 +security_DATA      = shield.conf
 +
-+pam_shield_la_LDFLAGS = -module -avoid-version
-+pam_shield_la_LIBADD  = -lgdbm -lpam
-+shield_purge_LDFLAGS  = -lgdbm
-+
 +AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 +            -D_REENTRANT -Wall -Wmissing-declarations -Wmissing-prototypes \
 +            -Wredundant-decls -Wshadow -Wstrict-prototypes -Winline -pipe
++
++pam_shield_la_LDFLAGS = -module -avoid-version
++pam_shield_la_LIBADD  = -lgdbm -lpam
++pam_shield_la_SOURCES = pam_shield.c pam_shield_lib.c
++shield_purge_LDFLAGS  = -lgdbm
++shield_purge_SOURCES = shield_purge.c pam_shield_lib.c
++shield_purge_CFLAGS = $(AM_CFLAGS)
 +
 +install-exec-hook:
 +	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 +	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
 +#	ln -s shield-trigger.sh "${DESTDIR}${sbindir}/pam_shield-trigger";
-Index: pam-shield-0.9.2/autogen.sh
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ pam-shield-0.9.2/autogen.sh	2009-10-09 09:09:16.000000000 -0400
+--- /dev/null
++++ b/autogen.sh
 @@ -0,0 +1,6 @@
 +#!/bin/sh
 +
@@ -40,10 +39,8 @@ Index: pam-shield-0.9.2/autogen.sh
 +export ACLOCAL=/usr/bin/aclocal-1.11
 +
 +exec autoreconf -fi;
-Index: pam-shield-0.9.2/configure.ac
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ pam-shield-0.9.2/configure.ac	2009-10-09 09:08:30.000000000 -0400
+--- /dev/null
++++ b/configure.ac
 @@ -0,0 +1,38 @@
 +
 +AC_INIT(pam_shield, 0.9.2)
