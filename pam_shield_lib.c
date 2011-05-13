@@ -67,8 +67,6 @@ long retention = DEFAULT_RETENTION;
 
 time_t this_time;
 
-void logmsg(int level, const char *fmt, ...);
-
 
 ip_list *new_ip_list(void) {
 ip_list *ip;
