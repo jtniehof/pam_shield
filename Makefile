@@ -486,6 +486,7 @@ install-mang: $(dist_man_MANS)
 	    $(INSTALL_DATA) $$files "$(DESTDIR)$(mangdir)" || exit $$?; }; \
 	done; }
 
+<<<<<<< HEAD
 uninstall-mang:
 	@$(NORMAL_UNINSTALL)
 	@list=''; test -n "$(mangdir)" || exit 0; \
