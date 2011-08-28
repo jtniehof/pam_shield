@@ -74,6 +74,7 @@ struct option long_options[] = {
 	{ "dry-run",	0, NULL, 'n' },
 	{ "list",		0, NULL, 'l' },
 	{ "force",		0, NULL, 'f' },
+	{ NULL,			0, NULL, 0   },
 };
 
 	while((opt = getopt_long(argc, argv, "hdc:nlf", long_options, NULL)) != -1) {
