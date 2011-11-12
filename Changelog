@@ -1,3 +1,10 @@
+dd MMM 2011:
+- release 0.9.6
+- Change build system
+- Add man pages (Thanks to Carl Thompson)
+- Make shield-trigger-iptables more flexible (Thanks Carl Thompson)
+- Make cron job behave if shield-purge disappears from under it
+
 12 Jan 2011:
 - release 0.9.5
 Bugfix by Heino Gutschmidt:
