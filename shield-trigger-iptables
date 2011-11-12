@@ -32,37 +32,18 @@ run_iptables() {
 		IPT=ip6tables
 	fi
 
-#	switch -A for iptables to -I
-	if [ "$1" == "-A" ]
-	then
-		TASK="-I"
-	else
-		TASK="-D"
-	fi
-
-#	check to see if pam_shield chain exists and create if necessary
-	if [ "$TASK" == "-I" ]
-	then
-		CHAIN_TEST=`$IPT -L pam_shield 2>/dev/null`
-		if [ -z "$CHAIN_TEST" ]
-		then
-			"$IPT" -N pam_shield
-			"$IPT" -I pam_shield -j DROP
-		fi
-	fi
-
 #
-#	CUSTOMIZE THIS RULE if you want to
+#	CUSTOMIZE THIS RULE
 #
-#	$TASK is the iptables command: -A/-I or -D
+#	$1 is the iptables command: -A or -D
 #	$2 is the IP number
 #
 #	* put in the correct chain name (pam_shield or INPUT)
 #	* put in the correct network interface name (eth0)
-#	* put in a port number (currently blocks all ports)
+#	* put in the correct port number (22 is ssh)
 #	* add additional rules for additional services as needed
 #
-	"$IPT" "$TASK" INPUT -p tcp -s "$2" -j pam_shield
+	"$IPT" "$1" INPUT -i eth0 -p tcp -s "$2" --destination-port 22 -j pam_shield
 
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...
