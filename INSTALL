@@ -23,9 +23,14 @@ Pre-reqs on a RedHat or Fedora-like system:
     gdbm-devel
 
 
-There is no 'configure' script.
-Edit the Makefile to customize the installation directories.
-(install-sh is provided just in case you have no 'install' command).
+pam_shield contains a standard GNU configure script; basic setup:
+./configure
+make
+make install
+
+If using a git checkout instead of a tarball, use:
+autoreconf -i
+first.
 
 pam_shield consists of:
 - one PAM module:   /lib/security/pam_shield.so
