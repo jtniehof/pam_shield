@@ -1,6 +1,7 @@
 
 AC_INIT(pam_shield, 0.9.2)
 AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
