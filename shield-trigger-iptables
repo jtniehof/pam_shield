@@ -58,12 +58,14 @@ run_iptables() {
 #	$2 is the IP number
 #
 #	* put in the correct chain name (pam_shield or INPUT)
-#	* put in the correct network interface name (eth0)
-#	* put in a port number (currently blocks all ports)
+#	* put in the correct network interface name (e.g. -i eth0)
+#         Currently blocks on all interfaces
+#	* put in a port number (e.g.--destination-port 22 for ssh only) 
+#         Currently blocks all ports
 #	* add additional rules for additional services as needed
 #
 
-	"$IPT" "$TASK" INPUT -i eth0 -p tcp -s "$2" -j pam_shield
+	"$IPT" "$TASK" INPUT -p tcp -s "$2" -j pam_shield
 
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...
