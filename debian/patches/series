@@ -1,3 +1,2 @@
 automake.patch
 shield-trigger-iptables.patch
-cron_fix.patch
