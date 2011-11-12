@@ -42,7 +42,9 @@ pam_shield consists of:
 - a gdbm database:  /var/lib/pam_shield/db
 
 Type 'make' to build the software.
-Do a 'make install' as root to install the software.
+Do a 'make install' as root to install the software. Note that, by default,
+it will install into /usr rather than /usr/local (use the --prefix option
+to configure to change this.)
 You may do 'make uninstall' to remove the software.
 
 

@@ -9,8 +9,9 @@ AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 AC_PROG_LN_S
 
+AC_PREFIX_DEFAULT(/usr)
 AC_ARG_WITH([slibdir], AS_HELP_STRING([--with-slibdir=PATH],
-	[Path to the super lib directory [[/lib]]]),
+	[Path to the super lib directory [/lib]]),
 	[slibdir="$withval"], [slibdir="/lib"])
 AC_SUBST(slibdir)
 
@@ -35,4 +36,12 @@ case "$host" in
 	;;
 esac;
 AC_SUBST(PAM_MODDIR)
+
+#This is a bad hack to use /etc instead of /usr/etc if prefix not specified
+#After https://fedorahosted.org/pipermail/netcf-devel/2011-May/000540.html
+#Note this makes documentation for --sysconfdir lie.
+if test "$prefix" = "NONE" && test "$sysconfdir" = '${prefix}/etc' ; then
+    sysconfdir='/etc'
+fi
+
 AC_OUTPUT(Makefile)
