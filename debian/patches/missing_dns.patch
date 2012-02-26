@@ -1,0 +1,111 @@
+Subject: Block IPs when allow_missing_dns=no
+Origin: upstream, https://github.com/walterdejong/pam_shield/commit/afa7b246018787fe6028289c414c33292641e1e0
+Bug-debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=658830
+Forwarded: not-needed
+Author: Walter de Jong <walter@heiho.net>
+Reviewed-by: Jonathan Niehof <jtniehof@gmail.com>
+Last-Update: 2012-02-26
+--- a/pam_shield.c
++++ b/pam_shield.c
+@@ -131,6 +131,7 @@
+ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+ char *user, *rhost;
+ struct passwd *pwd;
++int suspicious_dns;
+ 
+ 	if (init_module())
+ 		return PAM_IGNORE;
+@@ -152,6 +153,13 @@
+ 
+ 	logmsg(LOG_DEBUG, "user %s", (user == NULL) ? "(unknown)" : user);
+ 
++/* if not blocking all and the user is known, let go */
++	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
++		logmsg(LOG_DEBUG, "ignoring known user %s", user);
++		deinit_module();
++		return PAM_IGNORE;
++      }
++
+ /* get the remotehost address */
+ 	if (pam_get_item(pamh, PAM_RHOST, (const void **)(void *)&rhost) != PAM_SUCCESS)
+ 		rhost = NULL;
+@@ -164,6 +172,7 @@
+ /*
+ 	if rhost is completely numeric, then it has no DNS entry
+ */
++	suspicious_dns = 0;
+ 	if(rhost != NULL) {
+ 	if (strspn(rhost, "0123456789.") == strlen(rhost)
+ 		|| strspn(rhost, "0123456789:abcdefABCDEF") == strlen(rhost)) {
+@@ -171,8 +180,7 @@
+ 			logmsg(LOG_DEBUG, "missing DNS entry for %s (allowed)", rhost);
+ 		else {
+ 			logmsg(LOG_DEBUG, "missing DNS entry for %s (denied)", rhost);
+-			deinit_module();
+-			return PAM_AUTH_ERR;
++			suspicious_dns = 1;
+ 		}
+ 	} else {
+ /*
+@@ -180,16 +188,10 @@
+ */
+ 		if (match_name_list(rhost)) {
+ 			deinit_module();
+-			return PAM_IGNORE;
++			return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+ 		}
+ 	}
+ 	}
+-/* if not blocking all and the user is known, let go */
+-	if (!(options & OPT_BLOCK_ALL) && user != NULL && (pwd = getpwnam(user)) != NULL) {
+-		logmsg(LOG_DEBUG, "ignoring known user %s", user);
+-		deinit_module();
+-		return PAM_IGNORE;
+-	}
+ 	if (rhost != NULL) {
+ 		struct addrinfo *addr_info, *addr_p;
+ 		unsigned char addr_family;
+@@ -205,8 +207,7 @@
+ 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (allowed)", rhost);
+ 			else {
+ 				logmsg(LOG_DEBUG, "missing reverse DNS entry for %s (denied)", rhost);
+-				deinit_module();
+-				return PAM_AUTH_ERR;
++				suspicious_dns = 1;
+ 			}
+ 		}
+ /* for every address that this host is known for, check for whitelist entry */
+@@ -238,13 +239,13 @@
+ 
+ 					freeaddrinfo(addr_info);
+ 					deinit_module();
+-					return PAM_IGNORE;
++					return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+ 			}
+ /* host is whitelisted by an allow line in the config file, so exit */
+ 			if (whitelisted) {
+ 				freeaddrinfo(addr_info);
+ 				deinit_module();
+-				return PAM_IGNORE;
++				return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+ 			}
+ 		}
+ /* open the database */
+@@ -252,7 +253,7 @@
+ 			logmsg(LOG_ERR, "failed to open gdbm file '%s' : %s", dbfile, gdbm_strerror(gdbm_errno));
+ 			freeaddrinfo(addr_info);
+ 			deinit_module();
+-			return PAM_IGNORE;
++			return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+ 		}
+ /* for every address that this host is known for, check the database */
+ 		for(addr_p = addr_info; addr_p != NULL; addr_p = addr_p->ai_next) {
+@@ -330,7 +331,7 @@
+ 		gdbm_close(dbf);
+ 	}
+ 	deinit_module();
+-	return PAM_IGNORE;
++	return (suspicious_dns) ? PAM_AUTH_ERR : PAM_IGNORE;
+ }
+ 
+ PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {

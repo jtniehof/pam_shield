@@ -1,3 +1,10 @@
+pam-shield (0.9.2-3.3) stable; urgency=high
+
+  * Non-maintainer upload.
+  * Block IPs when allow_missing_dns is no (Closes: #658830).
+
+ -- Jonathan Niehof <jtniehof@gmail.com>  Sun, 26 Feb 2012 09:55:31 -0700
+
 pam-shield (0.9.2-3.2) unstable; urgency=low
 
   * Non-maintainer upload.
