@@ -64,8 +64,6 @@ install: build
 	# Add here commands to install the package into debian/tmp
 	$(MAKE) DESTDIR=$(CURDIR)/debian/libpam-shield install
 	rm -f $(CURDIR)/debian/libpam-shield/lib/security/pam_shield.la
-	cp -f $(CURDIR)/shield-trigger $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger
-	cp -f $(CURDIR)/shield-trigger-iptables $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger-iptables
 	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield
 
 # Build architecture-independent files here.
