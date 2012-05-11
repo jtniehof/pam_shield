@@ -1,9 +1,9 @@
 /*
 	pam_shield_lib.c	WJ106
 
-    pam_shield 0.9.5 WJ107
-    Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
-    OPT_FORCE copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
+    pam_shield 0.9.6 WJ107
+    Copyright (C) 2007-2012  Walter de Jong <walter@heiho.net>
+    and Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,12 +18,6 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-/*
-	This file is not a true library; this code is #include'd into
-	the pam_shield sources. The reason for this is that I had problems
-	with having lots of duplicate code, while the symbols should be 'static'
-	in the resulting pam_shield.so shared library
 */
 
 #include <stdio.h>

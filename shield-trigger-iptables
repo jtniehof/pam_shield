@@ -2,8 +2,9 @@
 #
 #	shield-trigger-iptables	WJ107
 #
-#   pam_shield 0.9.5  WJ107
-#   Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
+#   pam_shield 0.9.6  WJ107
+#   Copyright (C) 2007-2012  Walter de Jong <walter@heiho.net>
+#   and Carl Thompson
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by

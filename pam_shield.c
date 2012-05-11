@@ -1,9 +1,9 @@
 /*
 	pam_shield.c	WJ106
 
-    pam_shield 0.9.5 WJ107
-    Copyright (C) 2007-2011  Walter de Jong <walter@heiho.net>
-    Copyright 2010 Jonathan Niehof <jtniehof@gmail.com>
+    pam_shield 0.9.6 WJ107
+    Copyright (C) 2007-2012  Walter de Jong <walter@heiho.net>
+    and Jonathan Niehof <jtniehof@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
