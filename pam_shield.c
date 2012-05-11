@@ -66,7 +66,7 @@ va_list varargs;
 /*
 	Mind that argv[0] is an argument, not the name of the module
 */
-void get_options(int argc, char **argv) {
+static void get_options(int argc, char **argv) {
 int i;
 
 	for(i = 0; i < argc; i++) {
@@ -86,7 +86,7 @@ int i;
 	}
 }
 
-_pam_shield_db_rec_t *new_db_record(int window_size) {
+static _pam_shield_db_rec_t *new_db_record(int window_size) {
 _pam_shield_db_rec_t *record;
 int size;
 
@@ -105,7 +105,7 @@ int size;
 	return record;
 }
 
-void destroy_db_record(_pam_shield_db_rec_t *record) {
+static void destroy_db_record(_pam_shield_db_rec_t *record) {
 	if (record != NULL)
 		free(record);
 }
@@ -115,7 +115,7 @@ void destroy_db_record(_pam_shield_db_rec_t *record) {
 
 	the return value must be freed with freeaddrinfo()
 */
-struct addrinfo *get_addr_info(char *rhost) {
+static struct addrinfo *get_addr_info(char *rhost) {
 struct addrinfo hints, *res;
 int err;
 
