@@ -39,15 +39,15 @@ fi
 
 case "$1" in
 	add)
-		logger -i -t shield-trigger -p authpriv.info "blocking $2"
-		ufw deny from $2
+		logger -i -t shield-trigger-ufw -p authpriv.info "blocking $2"
+		ufw insert 1 deny from $2
 #		mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...
 #EOF
 		;;
 
 	del)
-		logger -i -t shield-trigger -p authpriv.info "unblocking $2"
+		logger -i -t shield-trigger-ufw -p authpriv.info "unblocking $2"
 		ufw delete deny from $2
 #		mail -s "[security] pam_shield unblocked $2" root <<EOF
 #Another monkey kept off our backs ...
