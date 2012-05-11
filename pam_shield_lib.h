@@ -19,12 +19,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-/*
-	This file is not a true library; this code is #include'd into
-	the pam_shield sources. The reason for this is that I had problems
-	with having lots of duplicate code, while the symbols should be 'static'
-	in the resulting pam_shield.so shared library
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,14 +39,11 @@
 #include <errno.h>
 #include <gdbm.h>
 
+#include "config.h"
 #include "pam_shield.h"
 
 #pragma GCC visibility push(hidden)
-#define PAM_SHIELD_VERSION		"0.9.5"
 
-#define DEFAULT_CONFFILE		"/etc/security/shield.conf"
-#define DEFAULT_DBFILE			"/var/lib/pam_shield/db"
-#define DEFAULT_TRIGGER_CMD		"/usr/sbin/pam_shield-trigger"
 #define DEFAULT_MAX_CONNS		10
 #define DEFAULT_INTERVAL		60L
 #define DEFAULT_RETENTION		(3600L * 24L)
