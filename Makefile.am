@@ -5,7 +5,7 @@ sbin_PROGRAMS      = shield-purge
 #sbin_SCRIPTS       = shield-trigger.sh shield-trigger-iptables.sh
 securitydir        = ${sysconfdir}/security
 security_DATA      = shield.conf
-dist_man_MANS = man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8
+dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8
 
 AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
             -D_REENTRANT -Wall -Wmissing-declarations -Wmissing-prototypes \
