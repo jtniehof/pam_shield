@@ -44,5 +44,27 @@ AC_SUBST(PAM_MODDIR)
 if test "$prefix" = "NONE" && test "$sysconfdir" = '${prefix}/etc' ; then
     sysconfdir='/etc'
 fi
+if test "$prefix" = "NONE" && test "$localstatedir" = '${prefix}/var' ; then
+    localstatedir='/var'
+fi
+
+#conniptions to get real paths into the C without affecting makefiles
+ac_save_prefix="$prefix"
+ac_save_exec_prefix="$exec_prefix"
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+test "x$exec_prefix" = xNONE && exec_prefix=$prefix
+REAL_ETC=`eval echo $sysconfdir`
+AC_DEFINE_UNQUOTED([DEFAULT_CONFFILE], ["$REAL_ETC/security/shield.conf"],
+				       [Location of configuration file])
+REAL_VAR=`eval echo $localstatedir`
+AC_DEFINE_UNQUOTED([DEFAULT_DBFILE], ["$REAL_VAR/lib/pam_shield/db"],
+				     [Location of database])
+REAL_SBIN=`eval echo $sbindir`
+AC_DEFINE_UNQUOTED([DEFAULT_TRIGGER_CMD], ["$REAL_SBIN/shield-trigger"],
+					  [Command to block/unblock IP])
+AC_DEFINE_UNQUOTED([PAM_SHIELD_VERSION], ["$VERSION"],
+				[Version of pam_shield])
+prefix="$ac_save_prefix"
+exec_prefix="$ac_save_exec_prefix"
 
 AC_OUTPUT(Makefile)
