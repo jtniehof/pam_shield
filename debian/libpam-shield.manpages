@@ -2,3 +2,4 @@ man/shield.conf.5
 man/shield-purge.8
 man/shield-trigger.8
 man/shield-trigger-iptables.8
+man/shield-trigger-ufw.8
