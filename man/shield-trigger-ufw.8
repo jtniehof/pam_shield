@@ -1,0 +1,38 @@
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH shield-trigger-iptables 8 "11 May 2012" "pam_shield 0.9.6"
+.SH NAME
+shield-trigger-ufw \- program used with pam_shield PAM module to manage ip blocking
+.SH SYNOPSIS
+.BI "shield-trigger-ufw [add|del] <IP number>"
+.SH DESCRIPTION
+This is a program that manages the ip blocks for pam_shield PAM module via
+the "uncomplicated firewall"
+.BR ufw (8).
+shield-trigger-ufw is normally called by the pam_shield PAM module.
+.SH AUTHOR
+.br
+Jonathan Niehof
+<jtniehof@gmail.com>
+
+.SH PROJECT LOCATION
+http://www.heiho.net/pam_shield/index.html

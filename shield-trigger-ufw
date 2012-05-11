@@ -1,0 +1,62 @@
+#! /bin/sh
+#
+#	shield-trigger-ufw
+#
+#   pam_shield 0.9.6
+#   Copyright (C) 2007-2012  Walter de Jong <walter@heiho.net>
+#   and Jonathan Niehof <jtniehof@gmail.com>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+usage() {
+	echo "shield-trigger-ufw"
+	echo "usage: ${0##*/} [add|del] <IP number>"
+	echo
+	echo "shield-trigger-ufw is normally called by the pam_shield PAM module"
+	exit 1
+}
+
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -z "$2" ]
+then
+	usage
+fi
+
+case "$1" in
+	add)
+		logger -i -t shield-trigger -p authpriv.info "blocking $2"
+		ufw deny from $2
+#		mail -s "[security] pam_shield blocked $2" root <<EOF
+#Another monkey kept off our backs ...
+#EOF
+		;;
+
+	del)
+		logger -i -t shield-trigger -p authpriv.info "unblocking $2"
+		ufw delete deny from $2
+#		mail -s "[security] pam_shield unblocked $2" root <<EOF
+#Another monkey kept off our backs ...
+#EOF
+		;;
+
+	*)
+		usage
+		;;
+esac
+
+# EOB
