@@ -48,7 +48,7 @@
 #include "pam_shield.h"
 
 #pragma GCC visibility push(hidden)
-#define PAM_SHIELD_VERSION		"0.9.5"
+#define PAM_SHIELD_VERSION		"0.9.6"
 
 #define DEFAULT_CONFFILE		"/etc/security/shield.conf"
 #define DEFAULT_DBFILE			"/var/lib/pam_shield/db"
