@@ -1,10 +1,11 @@
 dd MMM 2011:
 - release 0.9.6
-- Change build system
+- Change build system to autoconf
 - Add man pages (Thanks to Carl Thompson)
 - Make shield-trigger-iptables more flexible (Thanks Carl Thompson)
 - Make cron job behave if shield-purge disappears from under it
 - use iptables to block bad IPs on all interfaces, not just eth0
+- add optional trigger script to use ufw instead of iptables directly
 
 12 Jan 2011:
 - release 0.9.5
