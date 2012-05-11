@@ -21,13 +21,22 @@
 .\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
 .\" USA.
 .\"
-.TH shield-purge 8 "March 26, 2011"
+.TH shield-purge 8 "11 May 2012" "pam_shield 0.9.6"
 .SH NAME
-shield-purge \- This program is part of the PAM-shield package.
+shield-purge \- manage hosts rules for the pam_shield package.
 .SH SYNOPSIS
 .BI "shield-purge [-hdnlf] [-c config file]"
 .SH DESCRIPTION
-shield-purge deletes old entries from the database.
+shield-purge deletes old entries from the database. A binary for the
+pam-shield module, shield_purge is not intended to be invoked manualy.
+It is a halper program for job in crontab.
+
+.B shield-purge
+clears records from the database that are older than the time specified by
+.B retention
+in
+.BR shield.conf (5).
+
 This program is part of the PAM-shield package.
 PAM-shield comes with ABSOLUTELY NO WARRANTY.  This is free software, and you
 are welcome to redistribute it under certain conditions.  See the GNU
