@@ -14,7 +14,7 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 # shared library versions, option 1
-version=0.9.2
+version=0.9.6
 major=0
 # option 2, assuming the library is created as src/.libs/libfoo.so.2.0.5 or so
 #version=`ls src/.libs/lib*.so.* | \
@@ -64,8 +64,8 @@ install: build
 	# Add here commands to install the package into debian/tmp
 	$(MAKE) DESTDIR=$(CURDIR)/debian/libpam-shield install
 	rm -f $(CURDIR)/debian/libpam-shield/lib/security/pam_shield.la
-	cp -f $(CURDIR)/shield-trigger.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger
-	cp -f $(CURDIR)/shield-trigger-iptables.sh $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger-iptables
+	cp -f $(CURDIR)/shield-trigger $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger
+	cp -f $(CURDIR)/shield-trigger-iptables $(CURDIR)/debian/libpam-shield/usr/sbin/shield-trigger-iptables
 	cp -f $(CURDIR)/pam_shield.cron $(CURDIR)/debian/libpam-shield/etc/cron.daily/pam_shield
 
 # Build architecture-independent files here.
