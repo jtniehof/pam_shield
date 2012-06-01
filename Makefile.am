@@ -15,9 +15,10 @@ AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 
 pam_shield_la_LDFLAGS = -module -avoid-version
 pam_shield_la_LIBADD  = -lgdbm -lpam
-pam_shield_la_SOURCES = pam_shield.c pam_shield_lib.c
+pam_shield_la_SOURCES = pam_shield.c pam_shield_lib.c \
+			pam_shield.h pam_shield_lib.h
 shield_purge_LDFLAGS  = -lgdbm
-shield_purge_SOURCES = shield_purge.c pam_shield_lib.c
+shield_purge_SOURCES = shield_purge.c pam_shield_lib.c pam_shield_lib.h
 shield_purge_CFLAGS = $(AM_CFLAGS)
 
 #The slib dir isn't considered exec, so make sure this really runs
