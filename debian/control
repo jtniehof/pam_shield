@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Jonathan Niehof <jtniehof@gmail.com>
 Build-Depends: debhelper (>= 8), libgdbm-dev, libpam0g-dev, autoconf, automake (>= 1.11), libtool
 Standards-Version: 3.9.3.0
-Homepage: http://www.heiho.net/pam_shield/
+Homepage: http://github.com/jtniehof/pam_shield
 
 Package: libpam-shield
 Architecture: any
