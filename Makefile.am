@@ -5,6 +5,8 @@ sbin_PROGRAMS      = shield-purge
 sbin_SCRIPTS       = shield-trigger shield-trigger-iptables shield-trigger-ufw
 securitydir        = ${sysconfdir}/security
 security_DATA      = shield.conf
+pamcfgdir	   = ${datarootdir}/pam-config
+pamcfg_DATA        = pam_shield
 dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8 man/shield-trigger-ufw.8
 
 AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \

@@ -44,6 +44,7 @@ pam_shield consists of:
 - one cron script:  /etc/cron.daily/pam-shield
 - one config file:  /etc/security/shield.conf
 - a gdbm database:  /var/lib/pam_shield/db
+- PAM config:       /usr/share/pam-config/pam_shield
 
 Type 'make' to build the software.
 Do a 'make install' as root to install the software. Note that, by default,
@@ -72,7 +73,9 @@ Configuring PAM
 ---------------
 The PAM config files usually reside under /etc/pam.d/
 Note that exact content of the PAM config files tends to differ between
-distributions.
+distributions. If your distribution supports pam-auth-update, the installed
+/usr/share/pam-config/pam_shield file should be enough for pam-auth-update
+to recognize and activate PAM (roughly in configuration 2, below).
 
 pam_shield.so must be included in the PAM configuration file for any
 services where it might be useful. In general, /etc/pam.d/sshd.
