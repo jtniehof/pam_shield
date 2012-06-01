@@ -2,10 +2,15 @@ AUTOMAKE_OPTIONS   = foreign subdir-objects
 moduledir          = @PAM_MODDIR@
 module_LTLIBRARIES = pam_shield.la
 sbin_PROGRAMS      = shield-purge
-sbin_SCRIPTS       = shield-trigger shield-trigger-iptables shield-trigger-ufw
+dist_sbin_SCRIPTS  = shield-trigger shield-trigger-iptables shield-trigger-ufw
 securitydir        = ${sysconfdir}/security
-security_DATA      = shield.conf
+dist_security_DATA = shield.conf
+pamcfgdir	   = ${datarootdir}/pam-config
+dist_pamcfg_DATA   = pam_shield
+crondir            = ${sysconfdir}/cron.daily
+dist_cron_DATA     = pam_shield.cron
 dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8 man/shield-trigger-ufw.8
+EXTRA_DIST         = CREDITS Changelog
 
 AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
             -D_REENTRANT -Wall -Wmissing-declarations -Wmissing-prototypes \
@@ -13,12 +18,19 @@ AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 
 pam_shield_la_LDFLAGS = -module -avoid-version
 pam_shield_la_LIBADD  = -lgdbm -lpam
-pam_shield_la_SOURCES = pam_shield.c pam_shield_lib.c
+pam_shield_la_SOURCES = pam_shield.c pam_shield_lib.c \
+			pam_shield.h pam_shield_lib.h
 shield_purge_LDFLAGS  = -lgdbm
-shield_purge_SOURCES = shield_purge.c pam_shield_lib.c
+shield_purge_SOURCES = shield_purge.c pam_shield_lib.c pam_shield_lib.h
 shield_purge_CFLAGS = $(AM_CFLAGS)
 
+#The slib dir isn't considered exec, so make sure this really runs
+#after libtool dumps the la
 install-exec-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
-#	ln -s shield-trigger.sh "${DESTDIR}${sbindir}/pam_shield-trigger";
+
+install-data-hook:
+	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
+	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
+

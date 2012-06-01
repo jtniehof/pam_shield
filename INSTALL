@@ -1,4 +1,6 @@
-pam_shield by Walter de Jong <walter@heiho.net> (C) 2007-2011
+pam_shield by Walter de Jong <walter@heiho.net> and
+Jonathan Niehof <jtniehof@gmail.com>
+Copyright 2007-2012
 
 pam_shield COMES WITH NO WARRANTY. synctool IS FREE SOFTWARE.
 pam_shield is distributed under terms described in the GNU General Public
@@ -36,10 +38,13 @@ pam_shield consists of:
 - one PAM module:   /lib/security/pam_shield.so
                  or /lib64/security/pam_shield.so on 64-bit systems
 - one binary:       /usr/sbin/shield-purge
-- one shell script: /usr/sbin/shield-trigger
+- three scripts:    /usr/sbin/shield-trigger
+                    /usr/sbin/shield-trigger-iptables
+                    /usr/sbin/shield-trigger-ufw
 - one cron script:  /etc/cron.daily/pam-shield
 - one config file:  /etc/security/shield.conf
 - a gdbm database:  /var/lib/pam_shield/db
+- PAM config:       /usr/share/pam-config/pam_shield
 
 Type 'make' to build the software.
 Do a 'make install' as root to install the software. Note that, by default,
@@ -58,15 +63,19 @@ attack)).
 pam_shield uses a shell script named shield-trigger to block and unblock
 sites. It will use null-routing to do so.
 A script named shield-trigger-iptables is provided too, which uses iptables
-to block sites, but beware that it needs system-specific customization to
+to block sites, but beware that it may need system-specific customization to
 work correctly.
+A third option is shield-trigger-ufw, which uses (and requires) the
+Uncomplicated FireWall ufw, usually associated with Ubuntu.
 
 
 Configuring PAM
 ---------------
 The PAM config files usually reside under /etc/pam.d/
 Note that exact content of the PAM config files tends to differ between
-distributions.
+distributions. If your distribution supports pam-auth-update, the installed
+/usr/share/pam-config/pam_shield file should be enough for pam-auth-update
+to recognize and activate PAM (roughly in configuration 2, below).
 
 pam_shield.so must be included in the PAM configuration file for any
 services where it might be useful. In general, /etc/pam.d/sshd.
