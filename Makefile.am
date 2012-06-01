@@ -20,7 +20,13 @@ shield_purge_LDFLAGS  = -lgdbm
 shield_purge_SOURCES = shield_purge.c pam_shield_lib.c
 shield_purge_CFLAGS = $(AM_CFLAGS)
 
+#The slib dir isn't considered exec, so make sure this really runs
+#after libtool dumps the la
 install-exec-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
-#	ln -s shield-trigger.sh "${DESTDIR}${sbindir}/pam_shield-trigger";
+
+install-data-hook:
+	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
+	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
+
