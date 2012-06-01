@@ -2,7 +2,7 @@ pam-shield (0.9.6-1) unstable; urgency=low
 
   * New maintainer. (Closes: #572656).
   * Switch to dpkg-source 3.0 (quilt) format.
-  * Bump Standards Version to 3.8.4.0. (No changes needed).
+  * Bump Standards Version to 3.9.3.0. (No changes needed).
   * Update to debhelper 8.
     -dh_clean now handles *-stamp (7)
     -new dh_prep. (7)
