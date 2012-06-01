@@ -75,7 +75,6 @@ binary-arch: build install
 	dh_installchangelogs 
 	dh_installdocs
 	dh_installman
-	dh_installpam
 	dh_lintian
 	dh_link
 	dh_strip
