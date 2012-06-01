@@ -1,4 +1,4 @@
-dd MMM 2011:
+01 Jun 2012:
 - release 0.9.6
 - Change build system to autoconf
 - Add man pages (Thanks to Carl Thompson)
@@ -6,6 +6,7 @@ dd MMM 2011:
 - Make cron job behave if shield-purge disappears from under it
 - use iptables to block bad IPs on all interfaces, not just eth0
 - add optional trigger script to use ufw instead of iptables directly
+- new primary maintainer Jonathan Niehof
 
 12 Jan 2011:
 - release 0.9.5
