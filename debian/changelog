@@ -10,6 +10,7 @@ pam-shield (0.9.6-1) unstable; urgency=low
     -Add override for INSTALL (package-contains-upstream-install-documentation)
     -Add DEP-3 headers to patches (quilt-patch-missing-description)
   * Rename cron job so run-parts will actually run it.
+  * Support pam-auth-update. (Closes: #579514)
   * New upstream release:
     -Add manpage for shield.conf (Closes: #488847).
     -Ensure cron job does not return 0 (Closes: #563065).
