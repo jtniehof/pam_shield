@@ -10,6 +10,7 @@ dist_pamcfg_DATA   = pam_shield
 crondir            = ${sysconfdir}/cron.daily
 dist_cron_DATA     = pam_shield.cron
 dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8 man/shield-trigger-ufw.8
+EXTRA_DIST         = CREDITS Changelog
 
 AM_CFLAGS = -D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
             -D_REENTRANT -Wall -Wmissing-declarations -Wmissing-prototypes \
