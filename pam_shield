@@ -3,4 +3,4 @@ Default: yes
 Priority: 128
 Auth-Type: Primary
 Auth:
-requisite pam_shield.so
+	requisite pam_shield.so
