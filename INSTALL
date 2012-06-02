@@ -75,7 +75,7 @@ The PAM config files usually reside under /etc/pam.d/
 Note that exact content of the PAM config files tends to differ between
 distributions. If your distribution supports pam-auth-update, the installed
 /usr/share/pam-config/pam_shield file should be enough for pam-auth-update
-to recognize and activate PAM (roughly in configuration 2, below).
+to recognize and activate PAM (roughly in configuration 1, below).
 
 pam_shield.so must be included in the PAM configuration file for any
 services where it might be useful. In general, /etc/pam.d/sshd.
