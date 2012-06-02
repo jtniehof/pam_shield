@@ -36,6 +36,8 @@ install-data-hook:
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
 
 #Remove the .so by hand; since we remove the .la, libtool won't get the .so
+#also clean up the database
 uninstall-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.so";
+	rm -f "${DESTDIR}${localstatedir}/lib/pam_shield/db"
 	rmdir --ignore-fail-on-non-empty "${DESTDIR}${localstatedir}/lib/pam_shield";
