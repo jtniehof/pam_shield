@@ -5,7 +5,7 @@ sbin_PROGRAMS      = shield-purge
 dist_sbin_SCRIPTS  = shield-trigger shield-trigger-iptables shield-trigger-ufw
 securitydir        = ${sysconfdir}/security
 dist_security_DATA = shield.conf
-pamcfgdir	   = ${datarootdir}/pam-config
+pamcfgdir	   = ${datarootdir}/pam-configs
 dist_pamcfg_DATA   = pam_shield
 crondir            = ${sysconfdir}/cron.daily
 dist_cron_DATA     = pam_shield.cron
@@ -24,13 +24,18 @@ shield_purge_LDFLAGS  = -lgdbm
 shield_purge_SOURCES = shield_purge.c pam_shield_lib.c pam_shield_lib.h
 shield_purge_CFLAGS = $(AM_CFLAGS)
 
-#The slib dir isn't considered exec, so make sure this really runs
-#after libtool dumps the la
 install-exec-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
+	${INSTALL} -dm0755 "${DESTDIR}${localstatedir}/lib/pam_shield";
 
+#The slib dir isn't considered exec, so make sure this really runs
+#after libtool dumps the la
 install-data-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
 
+#Remove the .so by hand; since we remove the .la, libtool won't get the .so
+uninstall-hook:
+	rm -f "${DESTDIR}${moduledir}/pam_shield.so";
+	rmdir --ignore-fail-on-non-empty "${DESTDIR}${localstatedir}/lib/pam_shield";
