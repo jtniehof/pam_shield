@@ -50,8 +50,8 @@ _clean:
 	dh_clean
 
 clean: _clean
-	rm -fr aclocal.m4 build-stamp config.* configure missing \
-	Makefile Makefile.in stamp* .depend .deps/ .pc/ ltmain.sh libtool \
+	rm -fr build-stamp config.h config.status missing \
+	Makefile stamp* .depend .deps/ .pc/ ltmain.sh libtool \
 	depcomp install-sh
 	- rm -fr $(CURDIR)/debian/libpam-shield
 
