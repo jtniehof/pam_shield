@@ -34,3 +34,6 @@ install-data-hook:
 	rm -f "${DESTDIR}${moduledir}/pam_shield.la";
 	${INSTALL} -dm0755 "${DESTDIR}${sbindir}";
 
+#Remove the .so by hand; since we remove the .la, libtool won't get the .so
+uninstall-hook:
+	rm -f "${DESTDIR}${moduledir}/pam_shield.so";
