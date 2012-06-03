@@ -41,7 +41,7 @@ pam_shield consists of:
 - three scripts:    /usr/sbin/shield-trigger
                     /usr/sbin/shield-trigger-iptables
                     /usr/sbin/shield-trigger-ufw
-- one cron script:  /etc/cron.daily/pam-shield
+- one cron script:  /etc/cron.daily/pam_shield
 - one config file:  /etc/security/shield.conf
 - a gdbm database:  /var/lib/pam_shield/db
 - PAM config:       /usr/share/pam-config/pam_shield
