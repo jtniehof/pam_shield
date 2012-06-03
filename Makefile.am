@@ -8,7 +8,7 @@ dist_security_DATA = shield.conf
 pamcfgdir	   = ${datarootdir}/pam-configs
 dist_pamcfg_DATA   = pam_shield
 crondir            = ${sysconfdir}/cron.daily
-dist_cron_DATA     = pam_shield.cron
+dist_cron_SCRIPTS  = pam_shield.cron
 dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8 man/shield-trigger-ufw.8
 EXTRA_DIST         = CREDITS Changelog autogen.sh
 
