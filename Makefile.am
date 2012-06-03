@@ -2,13 +2,13 @@ AUTOMAKE_OPTIONS   = foreign subdir-objects
 moduledir          = @PAM_MODDIR@
 module_LTLIBRARIES = pam_shield.la
 sbin_PROGRAMS      = shield-purge
-dist_sbin_SCRIPTS  = shield-trigger shield-trigger-iptables shield-trigger-ufw
+dist_sbin_SCRIPTS  = scripts/*
 securitydir        = ${sysconfdir}/security
 dist_security_DATA = shield.conf
 pamcfgdir	   = ${datarootdir}/pam-configs
-dist_pamcfg_DATA   = pam_shield
+dist_pamcfg_DATA   = pam-configs/pam_shield
 crondir            = ${sysconfdir}/cron.daily
-dist_cron_DATA     = pam_shield.cron
+dist_cron_SCRIPTS  = cron.daily/pam_shield
 dist_man_MANS = man/shield.conf.5 man/shield-purge.8 man/shield-trigger.8 man/shield-trigger-iptables.8 man/shield-trigger-ufw.8
 EXTRA_DIST         = CREDITS Changelog autogen.sh
 
