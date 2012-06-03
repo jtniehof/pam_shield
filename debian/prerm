@@ -8,4 +8,6 @@ if [ "$1" = remove ]; then
         pam-auth-update --package --remove pam_shield
 fi
 
+#DEBHELPER#
+
 exit 0
