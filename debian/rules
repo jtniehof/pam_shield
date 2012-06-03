@@ -33,7 +33,7 @@ endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
-	sh ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs" --with-slibdir=/lib/ --sysconfdir=/etc/
+	sh ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)" CFLAGS="$(shell dpkg-buildflags --get CFLAGS)" LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) -Wl,-z,defs" --with-slibdir=/lib/ --sysconfdir=/etc/
 
 build: build-stamp
 build-stamp: config.status 
