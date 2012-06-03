@@ -28,7 +28,7 @@ pam-shield (0.9.6-1) unstable; urgency=low
     -Use IP blackhole routing to block
     -Optional ufw-based blocking
 
- -- Jonathan Niehof <jtniehof@gmail.com>  Fri, 01 Jun 2012 13:37:51 -0600
+ -- Jonathan Niehof <jtniehof@gmail.com>  Sun, 03 Jun 2012 13:08:23 -0600
 
 pam-shield (0.9.2-3.3) stable; urgency=high
 
