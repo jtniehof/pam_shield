@@ -1,0 +1,61 @@
+#! /bin/sh
+#
+#	shield-trigger-firewalld
+#
+#   Copyright (c) 2014 Matt Mossholder <matt@mossholder.com>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+usage() {
+	echo "shield-trigger-firewalld"
+	echo "usage: ${0##*/} [add|del] <IP number>"
+	echo
+	echo "shield-trigger-firewalld is normally called by the pam_shield PAM module"
+	exit 1
+}
+
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -z "$2" ]
+then
+	usage
+fi
+
+prog="/bin/firewall-cmd"
+
+[ -x $prog ] || exit 5
+
+ZONE=`$prog --get-default-zone`
+
+case "$1" in
+	add)
+		systemd-cat -t shield-trigger -p notice echo "blocking $2"
+		$prog --zone $ZONE --add-rich-rule "rule family=\"ipv4\" source address=\"$2\" drop"
+		;;
+
+	del)
+		systemd-cat -t shield-trigger -p info echo "unblocking $2"  
+		$prog --zone $ZONE --remove-rich-rule "rule family=\"ipv4\" source address=\"$2\" drop"
+		;;
+
+	*)
+		usage
+		;;
+esac
+
+exit 0
