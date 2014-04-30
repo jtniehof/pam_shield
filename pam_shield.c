@@ -145,7 +145,6 @@ int suspicious_dns;
 	if (init_module())
 		return PAM_IGNORE;
 
-	get_options(argc, (char **)argv);
 	logmsg(LOG_DEBUG, "this is version " PAM_SHIELD_VERSION);
 
 /*
@@ -153,6 +152,7 @@ int suspicious_dns;
 	by continuing anyway
 */
 	read_config();
+	get_options(argc, (char **)argv);
 
 /* get the username */
 	if (pam_get_item(pamh, PAM_USER, (const void **)(void *)&user) != PAM_SUCCESS)

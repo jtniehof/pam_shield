@@ -294,8 +294,8 @@ int main(int argc, char **argv) {
 	int retval = 0;
 	init_module();
 
-	get_options(argc, argv);
 	read_config();
+	get_options(argc, argv);
 
 	this_time = time(NULL);
 
