@@ -49,6 +49,7 @@ GDBM_FILE dbf;
 char *conffile = NULL;
 char *dbfile = NULL;
 char *trigger_cmd = NULL;
+char *removeip = NULL;
 
 /* white lists of addresses */
 ip_list *allow_ipv4_list = NULL;

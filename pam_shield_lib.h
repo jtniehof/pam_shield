@@ -54,6 +54,7 @@
 #define OPT_BLOCK_ALL			2		/* block all, including known users */
 #define OPT_DRYRUN				4
 #define OPT_LISTDB				8
+#define OPT_REMOVEIP				16
 #define OPT_MISSING_DNS			0x10	/* allow missing DNS */
 #define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
 #define OPT_FORCE			0x40	/* purge unexpired entries */
@@ -64,6 +65,7 @@ extern GDBM_FILE dbf;
 extern char *conffile;
 extern char *dbfile;
 extern char *trigger_cmd;
+extern char *removeip;
 
 /* white lists of addresses */
 extern ip_list *allow_ipv4_list;
