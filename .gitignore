@@ -1,0 +1,15 @@
+.deps
+.libs
+aclocal.m4
+autom4te.cache/
+build-aux/
+config.*
+configure
+Makefile
+Makefile.in
+libtool
+stamp-h1
+*.lo
+*.la
+*.o
+shield-purge*
