@@ -57,6 +57,7 @@
 #define OPT_MISSING_DNS			0x10	/* allow missing DNS */
 #define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
 #define OPT_FORCE			0x40	/* purge unexpired entries */
+#define OPT_REMOVEIP			0x80
 
 extern int options;
 extern GDBM_FILE dbf;
@@ -64,6 +65,7 @@ extern GDBM_FILE dbf;
 extern char *conffile;
 extern char *dbfile;
 extern char *trigger_cmd;
+extern char *removeip;
 
 /* white lists of addresses */
 extern ip_list *allow_ipv4_list;

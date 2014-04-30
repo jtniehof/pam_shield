@@ -52,6 +52,7 @@ static void usage(char *progname) {
 "  -n, --dry-run     Do not perform any updates\n"
 "  -l, --list        List all database entries\n"
 "  -f, --force       Delete all entries, even if unexpired\n"
+"  -r, --remove=ip   Remove IP from database\n"
 , basename(progname));
 
 	printf("\n"
@@ -74,10 +75,11 @@ struct option long_options[] = {
 	{ "dry-run",	0, NULL, 'n' },
 	{ "list",		0, NULL, 'l' },
 	{ "force",		0, NULL, 'f' },
+	{ "remove",		1, NULL, 'r' },
 	{ NULL,			0, NULL, 0   },
 };
 
-	while((opt = getopt_long(argc, argv, "hdc:nlf", long_options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, "hdc:nlfr:", long_options, NULL)) != -1) {
 		switch(opt) {
 			case 'h':
 			case '?':
@@ -112,6 +114,18 @@ struct option long_options[] = {
 			case 'f':
 				options |= OPT_FORCE;
 				logmsg(LOG_DEBUG, "force purge");
+				break;
+
+			case 'r':
+				options |= OPT_REMOVEIP;
+				if (optarg == NULL || !*optarg) {
+					logmsg(LOG_ERR, "missing ip");
+					exit(1);
+				}
+				if ((removeip = strdup(optarg)) == NULL) {
+					logmsg(LOG_ERR, "out of memory");
+					exit(-1);
+				}
 				break;
 
 			default:
@@ -226,7 +240,58 @@ int deleted=0; /*If any key deleted, order changes; must revisit all keys*/
 	}
 }
 
+/*
+	remove ip from the database
+*/
+static int remove_ip(void) {
+_pam_shield_db_rec_t *record;
+datum key, next_key, data;
+int deleted=0; /*If any key deleted, order changes; must revisit all keys*/
+char ipbuf[INET6_ADDRSTRLEN];
+
+	key = gdbm_firstkey(dbf);
+
+	while(key.dptr != NULL) {
+		data = gdbm_fetch(dbf, key);
+		next_key = gdbm_nextkey(dbf, key);
+
+		if (data.dptr == NULL) {
+			logmsg(LOG_DEBUG, "cleaning up empty key");
+			if (!(options & OPT_DRYRUN)) {
+				gdbm_delete(dbf, key);
+				deleted=1;
+			}
+		} else {
+			record = (_pam_shield_db_rec_t *)data.dptr;
+
+			print_ip(record, ipbuf, INET6_ADDRSTRLEN);
+			if (!strcmp(removeip, ipbuf)) {
+				logmsg(LOG_DEBUG, "remove entry: %s", ipbuf);
+				deleted=1;
+				if (!(options & OPT_DRYRUN)) {
+					record->trigger_active = (time_t)0L;
+					run_trigger("del", record);
+					gdbm_delete(dbf, key);
+				}
+			}
+			free(data.dptr);
+		}
+		free(key.dptr);
+		key = next_key;
+		if (deleted && !key.dptr) {
+			if (!(options & OPT_DRYRUN)) {
+				key = gdbm_firstkey(dbf);
+			}
+			return 0;
+		}
+	}
+
+	logmsg(LOG_ERR, "not found: %s", removeip);
+	return 1;
+}
+
 int main(int argc, char **argv) {
+	int retval = 0;
 	init_module();
 
 	get_options(argc, argv);
@@ -240,13 +305,15 @@ int main(int argc, char **argv) {
 	}
 	if (options & OPT_LISTDB)
 		list_db();
+	else if (options & OPT_REMOVEIP)
+		retval = remove_ip();
 	else
 		purge_db();
 
 	gdbm_close(dbf);
 
 	deinit_module();
-	return 0;
+	return retval;
 }
 
 /* EOB */
