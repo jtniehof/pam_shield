@@ -141,20 +141,29 @@ struct option long_options[] = {
 static void print_record(_pam_shield_db_rec_t *record) {
 char ipbuf[INET6_ADDRSTRLEN];
 unsigned int i;
+char * time = ctime(&record->trigger_active);
+
+	time[strlen(time)-1] = '\0';
 
 	print_ip(record, ipbuf, INET6_ADDRSTRLEN);
 
-	printf("{\n"
-		"  ip %s\n"
-		"  max_entries %u\n"
-		"  count %u\n"
-		"  trigger_active %s\n",
-		ipbuf, record->max_entries, record->count, ctime(&record->trigger_active)
-	);
+	printf("\n    {\n"
+			"      \"ip\": \"%s\",\n"
+			"      \"max_entries\": %u,\n"
+			"      \"count\": %u,\n"
+			"      \"trigger_active\": \"%s\",\n"
+			"      \"timestamps\": [\n",
+			ipbuf, record->max_entries, record->count,
+			(record->trigger_active > 0) ? time : ""
+	      );
 	for(i = 0; i < record->max_entries; i++)
-		printf("  timestamp %s", ctime(&record->timestamps[i]));
+		if (record->timestamps[i] > 0) {
+			time = ctime(&record->timestamps[i]);
+			time[strlen(time)-1] = '\0';
+			printf("        \"%s\"%s\n", time, (record->timestamps[(i+1)] > 0) ? "," : "");
+		}
 
-	printf("}\n");
+	printf("      ]\n    }");
 }
 
 /*
@@ -167,22 +176,29 @@ datum key, next_key, data;
 
 	key = gdbm_firstkey(dbf);
 
-	if (key.dptr == NULL)
+	if (key.dptr == NULL) {
 		printf("database is empty\n");
+		return;
+	}
+
+	printf("{\n  \"db\": [");
 
 	while(key.dptr != NULL) {
 		data = gdbm_fetch(dbf, key);
 
-		if (data.dptr == NULL) {
-			printf("NULL data\n");
-		} else {
+		if (data.dptr != NULL) {
 			record = (_pam_shield_db_rec_t *)data.dptr;
 			print_record(record);
 		}
 		next_key = gdbm_nextkey(dbf, key);
 		free(key.dptr);
 		key = next_key;
+		if (data.dptr != NULL && key.dptr != NULL) {
+			printf(",");
+		}
 	}
+
+	printf("\n  ]\n}\n");
 }
 
 /*
