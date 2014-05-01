@@ -762,11 +762,11 @@ char ipbuf[INET6_ADDRSTRLEN];
 /*
 	gdbm has encountered a fatal error
 */
-void fatal_func(char *str) {
+void fatal_func(const char *str) {
 	logmsg(LOG_ERR, "gdbm encountered a fatal error : %s; resetting the database", str);
 
 	gdbm_close(dbf);
-	if ((dbf = gdbm_open(dbfile, GDBM_NEWDB, 512, (mode_t)0600, fatal_func)) == NULL)
+	if ((dbf = gdbm_open(dbfile, 512, GDBM_NEWDB, (mode_t)0600, fatal_func)) == NULL)
 		logmsg(LOG_ERR, "failed to create new gdbm file '%s' : %s", dbfile, gdbm_strerror(gdbm_errno));
 }
 

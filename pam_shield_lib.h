@@ -172,7 +172,7 @@ int expire_record(_pam_shield_db_rec_t *record);
 /*
 	gdbm has encountered a fatal error
 */
-void fatal_func(char *str);
+void fatal_func(const char *str);
 
 #pragma GCC visibility pop
 /* EOB */
