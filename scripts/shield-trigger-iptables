@@ -34,7 +34,7 @@ run_iptables() {
 	fi
 
 #	switch -A for iptables to -I
-	if [ "$1" == "-A" ]
+	if [ "$1" = "-A" ]
 	then
 		TASK="-I"
 	else
@@ -42,7 +42,7 @@ run_iptables() {
 	fi
 
 #	check to see if pam_shield chain exists and create if necessary
-	if [ "$TASK" == "-I" ]
+	if [ "$TASK" = "-I" ]
 	then
 		CHAIN_TEST=`$IPT -L pam_shield 2>/dev/null`
 		if [ -z "$CHAIN_TEST" ]
