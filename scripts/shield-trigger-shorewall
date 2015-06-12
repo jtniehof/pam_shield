@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+#   shield-trigger-shorewall
+#
+#   Based on shield-trigger-ufw
+#
+#   Copyright (C) 2009-2015 Michael Fladischer <michael@fladi.at>
+#   Copyright (C) 2007-2012 Walter de Jong <walter@heiho.net>
+#     and Jonathan Niehof <jtniehof@gmail.com>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+usage() {
+    echo "Usage: ${0##*/} [add|del] <IP number>"
+    echo "$0 is normally called by the pam_shield PAM module"
+    exit 1
+}
+
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -z "$2" ]
+then
+    usage
+fi
+
+#
+#   louzy detection of IPv4 or IPv6 address
+#
+IPT=`echo "$2" | sed 's/[0ma-9\.]//g'`
+if [ -z "$IPT" ]
+then
+    SHOREWALL=/sbin/shorewall
+else
+    SHOREWALL=/sbin/shorewall6
+fi
+
+if [ ! -x $SHOREWALL ]; then
+    echo "Shorewall binary not found at $SHOREWALL."
+    echo "Maybe you need to run 'aptitude install shorewall/shorewall6'."
+    exit 1
+fi
+
+case "$1" in
+    add)
+        logger -i -t shield-trigger-shorewall -p auth.info "blocking $2"
+        $SHOREWALL reject $2
+        ;;
+
+    del)
+        logger -i -t shield-trigger-shorewall -p auth.info "unblocking $2"
+        $SHOREWALL allow $2
+        ;;
+
+    *)
+        usage
+        ;;
+esac
+
+# EOB
