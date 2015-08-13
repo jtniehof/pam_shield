@@ -25,6 +25,7 @@ null_route() {
 #
 #	louzy detection of IPv4 or IPv6 address
 #
+	TASK="$1"
 	INET=`echo "$2" | sed 's/[0-9\.]//g'`
 	if [ -z "$INET" ]
 	then
@@ -37,13 +38,20 @@ null_route() {
 
 	if [ -x /sbin/ip ]
 	then
-		/sbin/ip $INET route $1 blackhole $2
+		if [ "$TASK" == "show" ]; then
+			/sbin/ip $INET route $TASK $2 | read -t 1 -N 1
+			if [ $? -eq 0 ]; then
+				return
+			fi
+			TASK="add"
+		fi
+		/sbin/ip $INET route $TASK blackhole $2 2>/dev/null
 	else
 		if [ ! -z "$INET" ]
 		then
 			INET="-A inet6"
 		fi
-		/sbin/route $INET $1 -host $2 gw $GW dev lo
+		/sbin/route $INET $TASK -host $2 gw $GW dev lo
 	fi
 
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
@@ -57,7 +65,7 @@ null_route() {
 
 usage() {
 	echo "shield-trigger WJ107"
-	echo "usage: ${0##*/} [add|del] <IP number>"
+	echo "usage: ${0##*/} [add|del|sync] <IP number>"
 	echo
 	echo "shield-trigger is normally called by the pam_shield PAM module"
 	exit 1
@@ -83,6 +91,12 @@ case "$1" in
 		logger -i -t shield-trigger -p authpriv.info "unblocking $2"
 
 		CMD="del"
+		IP=$2
+		;;
+
+	sync)
+		logger -i -t shield-trigger -p authpriv.info "sync $2"
+		CMD="show"
 		IP=$2
 		;;
 

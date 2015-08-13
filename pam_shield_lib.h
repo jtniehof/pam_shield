@@ -50,14 +50,15 @@
 
 #define MAX_LINE				1024
 
-#define OPT_DEBUG				1
-#define OPT_BLOCK_ALL			2		/* block all, including known users */
-#define OPT_DRYRUN				4
-#define OPT_LISTDB				8
-#define OPT_MISSING_DNS			0x10	/* allow missing DNS */
-#define OPT_MISSING_REVERSE		0x20	/* allow missing reverse DNS */
-#define OPT_FORCE			0x40	/* purge unexpired entries */
-#define OPT_REMOVEIP			0x80
+#define OPT_DEBUG				0x001
+#define OPT_BLOCK_ALL			0x002		/* block all, including known users */
+#define OPT_DRYRUN				0x004
+#define OPT_LISTDB				0x008
+#define OPT_MISSING_DNS			0x010	/* allow missing DNS */
+#define OPT_MISSING_REVERSE		0x020	/* allow missing reverse DNS */
+#define OPT_FORCE				0x040	/* purge unexpired entries */
+#define OPT_REMOVEIP			0x080
+#define OPT_SYNC				0x100
 
 extern int options;
 extern GDBM_FILE dbf;

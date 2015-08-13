@@ -38,7 +38,7 @@ run_iptables() {
 	then
 		TASK="-I"
 	else
-		TASK="-D"
+		TASK=$1
 	fi
 
 #	check to see if pam_shield chain exists and create if necessary
@@ -47,7 +47,7 @@ run_iptables() {
 	then
 		"$IPT" -N pam_shield
 		"$IPT" -I pam_shield -j DROP
-		if [ "$TASK" = "-D" ]; then
+		if [ "$TASK" == "-D" ]; then
 			return
 		fi
 	fi
@@ -68,6 +68,12 @@ run_iptables() {
 
 	"$IPT" "$TASK" INPUT -p tcp -s "$2" -j pam_shield
 
+	if [ $? -ne 0 ]; then
+		if [ "$TASK" == "-C" ]; then
+			run_iptables "-I" "$2"
+		fi
+	fi
+
 #	mail -s "[security] pam_shield blocked $2" root <<EOF
 #Another monkey kept off our backs ...
 #EOF
@@ -79,7 +85,7 @@ run_iptables() {
 
 usage() {
 	echo "shield-trigger-iptables WJ107"
-	echo "usage: ${0##*/} [add|del] <IP number>"
+	echo "usage: ${0##*/} [add|del|sync] <IP number>"
 	echo
 	echo "shield-trigger-iptables is normally called by the pam_shield PAM module"
 	exit 1
@@ -108,6 +114,11 @@ case "$1" in
 		IP=$2
 		;;
 
+	sync)
+		logger -i -t shield-trigger -p authpriv.info "sync $2"
+		CMD="-C"
+		IP=$2
+		;;
 	*)
 		usage
 		;;

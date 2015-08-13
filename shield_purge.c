@@ -53,6 +53,8 @@ static void usage(char *progname) {
 "  -l, --list        List all database entries\n"
 "  -f, --force       Delete all entries, even if unexpired\n"
 "  -r, --remove=ip   Remove IP from database\n"
+"  -s, --sync        Trigger sync for active records\n"
+"                    (rebuild/verify firewall rules)\n"
 , basename(progname));
 
 	printf("\n"
@@ -76,10 +78,11 @@ struct option long_options[] = {
 	{ "list",		0, NULL, 'l' },
 	{ "force",		0, NULL, 'f' },
 	{ "remove",		1, NULL, 'r' },
+	{ "sync",		0, NULL, 's' },
 	{ NULL,			0, NULL, 0   },
 };
 
-	while((opt = getopt_long(argc, argv, "hdc:nlfr:", long_options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, "hdc:nlfr:s", long_options, NULL)) != -1) {
 		switch(opt) {
 			case 'h':
 			case '?':
@@ -126,6 +129,11 @@ struct option long_options[] = {
 					logmsg(LOG_ERR, "out of memory");
 					exit(-1);
 				}
+				break;
+
+			case 's':
+				options |= OPT_SYNC;
+				logmsg(LOG_DEBUG, "sync");
 				break;
 
 			default:

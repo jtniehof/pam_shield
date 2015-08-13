@@ -753,6 +753,10 @@ char ipbuf[INET6_ADDRSTRLEN];
 				run_trigger("del", record);
 				updated++;
 			}
+		} else {
+			if (options & OPT_SYNC) {
+				run_trigger("sync", record);
+			}
 		}
 	}
 	return updated;
