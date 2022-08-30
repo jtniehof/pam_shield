@@ -1,6 +1,8 @@
 Credit goes to:
 
-Jon Niehof for submitting patches: many bugfixes
+Walter de Jong for creating pam_shield and releasing it under the GNU GPL
+Jon Niehof for submitting patches and maintaining the project from 2010-2022
 Dag Wieers for reporting bugs
 Jan Engelhardt for submitting a patch that makes pam_shield much better
 Carl Thompson for man pages, patches to shield-trigger-iptables
+Jeffrey Clark for patches and maintaining the project from 2022-
