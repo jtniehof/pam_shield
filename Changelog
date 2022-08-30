@@ -1,3 +1,11 @@
+30 Aug 2022:
+- release 0.9.7
+- fix gdbm_option compiler warnings
+- format database list output as json
+- parse config file first to support runtime overrides
+- new optional argument to remove single IP from database
+- new primary maintainer Jeffrey Clark
+
 3 Jun 2012:
 - release 0.9.6
 - Change build system to autoconf
