@@ -1,9 +1,9 @@
 /*
-	pam_shield.h	WJ106
+	pam_shield.h
 */
 
-#ifndef PAM_SHIELD_WJ106
-#define PAM_SHIELD_WJ106	1
+#ifndef PAM_SHIELD
+#define PAM_SHIELD	1
 
 #include <netinet/in.h>
 
@@ -56,6 +56,6 @@ struct name_list_tag {
 	char name[1];
 };
 
-#endif	/* PAM_SHIELD_WJ106 */
+#endif	/* PAM_SHIELD */
 
 /* EOB */

@@ -1,7 +1,7 @@
 /*
-	pam_shield.c	WJ106
+	pam_shield.c
 
-    pam_shield 0.9.6 WJ107
+    pam_shield 0.9.7
     Copyright (C) 2007-2012  Walter de Jong <walter@heiho.net>
     and Jonathan Niehof <jtniehof@gmail.com>
 
