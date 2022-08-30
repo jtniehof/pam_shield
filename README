@@ -1,10 +1,6 @@
 pam_shield by Walter de Jong <walter@heiho.net> and Jonathan Niehof
 <jtniehof@gmail.com>, copyright 2007-2012.
 
-Walter and I started co-maintaining in 2010. As I have been unable to
-contact him, I am continuing development on my own. My latest version
-will be available on my github page, https://github.com/jtniehof/pam_shield
-
 pam_shield COMES WITH NO WARRANTY. pam_shield IS FREE SOFTWARE.
 pam_shield is distributed under terms described in the GNU General Public
 License.
@@ -67,8 +63,9 @@ See Also
  * BlockHosts: http://www.aczoom.com/cms/blockhosts/
 
 
-Greets,
-
-     --Walter
-
-EOB
+History
+-------
+2007 Walter de Jong created pam_shield.
+2010 Walter and Jonathan Niehof started co-maintaining.
+2012 Jonathan became the primary maintainer.
+2022 Jeffrey Clark became the primary maintainer.
